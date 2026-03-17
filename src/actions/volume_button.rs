@@ -31,12 +31,9 @@ pub struct VolumeButtonSettings {
     pub icon_color: String,
     pub icon_muted_color: String,
     pub mode: VolumeButtonMode,
-    /// Step size for up/down (percentage)
     pub step: u32,
-    /// Fixed volume for set mode (percentage)
     pub value: u32,
-    /// Whether this button reflects mute state via icon color
-    pub reflect_state: bool,
+    pub react_to_state: bool,
 }
 
 impl Default for VolumeButtonSettings {
@@ -51,7 +48,7 @@ impl Default for VolumeButtonSettings {
             mode: VolumeButtonMode::Up,
             step: 5,
             value: 50,
-            reflect_state: false,
+            react_to_state: false,
         }
     }
 }
@@ -72,8 +69,9 @@ impl Action for VolumeButtonAction {
         settings: &Self::Settings,
     ) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
+        render_button(instance, settings).await?;
         super::send_device_list(instance).await;
-        render_button(instance, settings).await
+        Ok(())
     }
 
     async fn will_disappear(
@@ -91,8 +89,9 @@ impl Action for VolumeButtonAction {
         settings: &Self::Settings,
     ) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
+        render_button(instance, settings).await?;
         super::send_device_list(instance).await;
-        render_button(instance, settings).await
+        Ok(())
     }
 
     async fn key_up(
@@ -125,8 +124,8 @@ pub async fn sync_all_instances() {
             .get(&inst.instance_id)
             .map(|s| s.clone())
             .unwrap_or_default();
-        if let Err(e) = render_button(&inst, &settings).await {
-            log::warn!("volume-button sync failed for {}: {e}", inst.instance_id);
+        if settings.react_to_state {
+            let _ = render_button(&inst, &settings).await;
         }
     }
 }
@@ -137,7 +136,7 @@ pub async fn sync_for_device(device_id: &str) {
             .get(&inst.instance_id)
             .map(|s| s.clone())
             .unwrap_or_default();
-        if settings.device_id == device_id && settings.reflect_state {
+        if settings.device_id == device_id && settings.react_to_state {
             let _ = render_button(&inst, &settings).await;
         }
     }
@@ -157,15 +156,17 @@ async fn render_button(
 ) -> OpenActionResult<()> {
     let label = button_label(settings);
 
-    let (bg, ic) = if settings.reflect_state {
-        let (_vol, muted) = audio::get_volume(&settings.device_id).await;
-        let bg = if muted { &settings.bg_muted_color } else { &settings.bg_color };
-        let ic = if muted { &settings.icon_muted_color } else { &settings.icon_color };
-        (bg.as_str(), ic.as_str())
+    let (bg, ic) = if settings.react_to_state {
+        let (volume, muted) = audio::get_volume(&settings.device_id).await;
+        let t = if muted { 0.0 } else { volume.clamp(0.0, 1.0) };
+        (
+            render::lerp_color(&settings.bg_muted_color, &settings.bg_color, t),
+            render::lerp_color(&settings.icon_muted_color, &settings.icon_color, t),
+        )
     } else {
-        (settings.bg_color.as_str(), settings.icon_color.as_str())
+        (settings.bg_color.clone(), settings.icon_color.clone())
     };
 
-    let svg = render::volume_button(bg, ic, &settings.icon, &label);
+    let svg = render::volume_button(&bg, &ic, &settings.icon, &label);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

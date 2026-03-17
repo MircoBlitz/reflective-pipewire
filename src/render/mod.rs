@@ -1,7 +1,26 @@
 pub mod icons;
 
+/// Parse a hex color string to (r, g, b).
+fn parse_hex(hex: &str) -> (u8, u8, u8) {
+    let hex = hex.trim_start_matches('#');
+    let r = u8::from_str_radix(&hex[0..2], 16).unwrap_or(0);
+    let g = u8::from_str_radix(&hex[2..4], 16).unwrap_or(0);
+    let b = u8::from_str_radix(&hex[4..6], 16).unwrap_or(0);
+    (r, g, b)
+}
+
+/// Interpolate between two hex colors. t=0.0 → from, t=1.0 → to.
+pub fn lerp_color(from: &str, to: &str, t: f32) -> String {
+    let (r1, g1, b1) = parse_hex(from);
+    let (r2, g2, b2) = parse_hex(to);
+    let t = t.clamp(0.0, 1.0);
+    let r = (r1 as f32 + (r2 as f32 - r1 as f32) * t) as u8;
+    let g = (g1 as f32 + (g2 as f32 - g1 as f32) * t) as u8;
+    let b = (b1 as f32 + (b2 as f32 - b1 as f32) * t) as u8;
+    format!("#{:02x}{:02x}{:02x}", r, g, b)
+}
+
 /// Render a mute toggle button as SVG.
-/// Icon color reflects state, background is configurable per state.
 pub fn mute_button(bg_color: &str, icon_color: &str, icon: &str, muted: bool) -> String {
     let icon_path = icons::get(icon);
     let slash = if muted {
@@ -27,7 +46,6 @@ pub fn mute_button(bg_color: &str, icon_color: &str, icon: &str, muted: bool) ->
 }
 
 /// Render a volume bar button as SVG.
-/// Icon color reflects state if reflect_state is true.
 pub fn volume_bar(
     bg_color: &str,
     icon_color: &str,

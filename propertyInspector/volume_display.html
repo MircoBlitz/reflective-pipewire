@@ -28,6 +28,11 @@
     <option value="mixer">Mixer</option>
   </select>
 
+  <div class="checkbox-row">
+    <input type="checkbox" id="react_to_state" checked>
+    <label for="react_to_state">React to volume/state</label>
+  </div>
+
   <div class="section">
     <div class="section-title">Icon-Farben</div>
     <label>Aktiv</label>
@@ -68,7 +73,8 @@
   <script>
     window.piFields = {
       device_id:        { type: "select", default: "@DEFAULT_AUDIO_SOURCE@" },
-      icon:             { type: "select", default: "mic" },
+      icon:             { type: "select",   default: "mic" },
+      react_to_state:   { type: "checkbox", default: true },
       icon_color:       { type: "color",  default: "#22c55e" },
       icon_muted_color: { type: "color",  default: "#ef4444" },
       bg_color:         { type: "color",  default: "#000000" },

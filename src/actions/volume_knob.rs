@@ -17,8 +17,8 @@ pub struct VolumeKnobSettings {
     pub icon_color: String,
     pub icon_muted_color: String,
     pub bar_color: String,
-    /// Volume change per encoder tick (percentage), default 5
     pub step: u32,
+    pub react_to_state: bool,
 }
 
 impl Default for VolumeKnobSettings {
@@ -32,6 +32,7 @@ impl Default for VolumeKnobSettings {
             icon_muted_color: "#ef4444".to_string(),
             bar_color: "#22c55e".to_string(),
             step: 5,
+            react_to_state: true,
         }
     }
 }
@@ -51,8 +52,9 @@ impl Action for VolumeKnobAction {
         settings: &Self::Settings,
     ) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
+        render_knob(instance, settings).await?;
         super::send_device_list(instance).await;
-        render_knob(instance, settings).await
+        Ok(())
     }
 
     async fn will_disappear(
@@ -70,8 +72,9 @@ impl Action for VolumeKnobAction {
         settings: &Self::Settings,
     ) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
+        render_knob(instance, settings).await?;
         super::send_device_list(instance).await;
-        render_knob(instance, settings).await
+        Ok(())
     }
 
     async fn dial_rotate(
@@ -109,9 +112,7 @@ pub async fn sync_all_instances() {
             .get(&inst.instance_id)
             .map(|s| s.clone())
             .unwrap_or_default();
-        if let Err(e) = render_knob(&inst, &settings).await {
-            log::warn!("volume-knob sync failed for {}: {e}", inst.instance_id);
-        }
+        let _ = render_knob(&inst, &settings).await;
     }
 }
 
@@ -132,8 +133,16 @@ async fn render_knob(
     settings: &VolumeKnobSettings,
 ) -> OpenActionResult<()> {
     let (volume, muted) = audio::get_volume(&settings.device_id).await;
-    let bg = if muted { &settings.bg_muted_color } else { &settings.bg_color };
-    let ic = if muted { &settings.icon_muted_color } else { &settings.icon_color };
-    let svg = render::volume_bar(bg, ic, &settings.bar_color, &settings.icon, volume, muted);
+    let (bg, ic, bar_c) = if settings.react_to_state {
+        let t = if muted { 0.0 } else { volume.clamp(0.0, 1.0) };
+        (
+            render::lerp_color(&settings.bg_muted_color, &settings.bg_color, t),
+            render::lerp_color(&settings.icon_muted_color, &settings.icon_color, t),
+            render::lerp_color(&settings.icon_muted_color, &settings.bar_color, t),
+        )
+    } else {
+        (settings.bg_color.clone(), settings.icon_color.clone(), settings.bar_color.clone())
+    };
+    let svg = render::volume_bar(&bg, &ic, &bar_c, &settings.icon, volume, muted);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }
