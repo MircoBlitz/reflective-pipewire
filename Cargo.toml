@@ -1,0 +1,21 @@
+[package]
+name = "reflective-pipewire"
+version = "0.1.0"
+edition = "2021"
+description = "Reactive PipeWire Audio Suite for OpenDeck"
+authors = ["MircoBlitz"]
+license = "MIT"
+
+[[bin]]
+name = "reflective-pipewire"
+path = "src/main.rs"
+
+[dependencies]
+openaction = { git = "https://github.com/OpenActionAPI/rust" }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+async-trait = "0.1"
+dashmap = "6"
+simplelog = "0.12"
+log = "0.4"

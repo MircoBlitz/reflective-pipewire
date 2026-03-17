@@ -1,0 +1,4 @@
+/target
+dist/**/*.sdPlugin/x86_64-unknown-linux-gnu/
+dist/**/*.sdPlugin/aarch64-unknown-linux-gnu/
+dist/**/*.zip
