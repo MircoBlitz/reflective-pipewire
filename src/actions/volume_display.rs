@@ -12,6 +12,7 @@ use crate::render;
 pub struct VolumeDisplaySettings {
     pub device_id: String,
     pub icon: String,
+    pub title: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
@@ -25,6 +26,7 @@ impl Default for VolumeDisplaySettings {
         Self {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
+            title: String::new(),
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
@@ -35,8 +37,7 @@ impl Default for VolumeDisplaySettings {
     }
 }
 
-static SETTINGS: LazyLock<DashMap<InstanceId, VolumeDisplaySettings>> =
-    LazyLock::new(DashMap::new);
+static SETTINGS: LazyLock<DashMap<InstanceId, VolumeDisplaySettings>> = LazyLock::new(DashMap::new);
 
 pub struct VolumeDisplayAction;
 
@@ -45,31 +46,19 @@ impl Action for VolumeDisplayAction {
     const UUID: ActionUuid = "com.mircoblitz.reflective-pipewire.volume-display";
     type Settings = VolumeDisplaySettings;
 
-    async fn will_appear(
-        &self,
-        instance: &Instance,
-        settings: &Self::Settings,
-    ) -> OpenActionResult<()> {
+    async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         render_display(instance, settings).await?;
         super::send_device_list(instance).await;
         Ok(())
     }
 
-    async fn will_disappear(
-        &self,
-        instance: &Instance,
-        _settings: &Self::Settings,
-    ) -> OpenActionResult<()> {
+    async fn will_disappear(&self, instance: &Instance, _settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.remove(&instance.instance_id);
         Ok(())
     }
 
-    async fn did_receive_settings(
-        &self,
-        instance: &Instance,
-        settings: &Self::Settings,
-    ) -> OpenActionResult<()> {
+    async fn did_receive_settings(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         render_display(instance, settings).await?;
         super::send_device_list(instance).await;
@@ -79,41 +68,32 @@ impl Action for VolumeDisplayAction {
 
 pub async fn sync_all_instances() {
     for inst in visible_instances(VolumeDisplayAction::UUID).await {
-        let settings = SETTINGS
-            .get(&inst.instance_id)
-            .map(|s| s.clone())
-            .unwrap_or_default();
-        let _ = render_display(&inst, &settings).await;
+        let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
+        let _ = render_display(&inst, &s).await;
     }
 }
 
 pub async fn sync_for_device(device_id: &str) {
     for inst in visible_instances(VolumeDisplayAction::UUID).await {
-        let settings = SETTINGS
-            .get(&inst.instance_id)
-            .map(|s| s.clone())
-            .unwrap_or_default();
-        if settings.device_id == device_id {
-            let _ = render_display(&inst, &settings).await;
+        let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
+        if s.device_id == device_id {
+            let _ = render_display(&inst, &s).await;
         }
     }
 }
 
-async fn render_display(
-    instance: &Instance,
-    settings: &VolumeDisplaySettings,
-) -> OpenActionResult<()> {
-    let (volume, muted) = audio::get_volume(&settings.device_id).await;
-    let (bg, ic, bar_c) = if settings.react_to_state {
+async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenActionResult<()> {
+    let (volume, muted) = audio::get_volume(&s.device_id).await;
+    let (bg, ic, bar_c) = if s.react_to_state {
         let t = if muted { 0.0 } else { volume.clamp(0.0, 1.0) };
         (
-            render::lerp_color(&settings.bg_muted_color, &settings.bg_color, t),
-            render::lerp_color(&settings.icon_muted_color, &settings.icon_color, t),
-            render::lerp_color(&settings.icon_muted_color, &settings.bar_color, t),
+            render::lerp_color(&s.bg_muted_color, &s.bg_color, t),
+            render::lerp_color(&s.icon_muted_color, &s.icon_color, t),
+            render::lerp_color(&s.icon_muted_color, &s.bar_color, t),
         )
     } else {
-        (settings.bg_color.clone(), settings.icon_color.clone(), settings.bar_color.clone())
+        (s.bg_color.clone(), s.icon_color.clone(), s.bar_color.clone())
     };
-    let svg = render::volume_bar(&bg, &ic, &bar_c, &settings.icon, volume, muted);
+    let svg = render::volume_bar(&bg, &ic, &bar_c, &s.icon, volume, muted, &s.title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

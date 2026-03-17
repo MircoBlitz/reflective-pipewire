@@ -28,6 +28,9 @@
     <option value="mixer">Mixer</option>
   </select>
 
+  <label>Title</label>
+  <input type="text" id="title" value="" class="full-width" placeholder="optional">
+
   <label>Modus</label>
   <select id="mode" class="full-width">
     <option value="up">Volume Up</option>
@@ -78,6 +81,7 @@
     window.piFields = {
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
       icon:             { type: "select",   default: "mic" },
+      title:            { type: "text",     default: "" },
       mode:             { type: "select",   default: "up" },
       step:             { type: "number",   default: 5 },
       value:            { type: "number",   default: 50 },
