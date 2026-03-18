@@ -113,6 +113,9 @@ select option {
   flex-direction: column;
   justify-content: center;
 }
+.device-row select {
+  padding: 10px 8px;
+}
 
 /* Checkbox */
 .checkbox-row {
