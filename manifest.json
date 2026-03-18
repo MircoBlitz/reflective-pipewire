@@ -1,7 +1,7 @@
 {
   "Name": "Reflective PipeWire",
   "Author": "MircoBlitz",
-  "Version": "0.2.24",
+  "Version": "0.2.25",
   "Description": "Reactive PipeWire Audio Suite for OpenDeck. Mute toggle, volume knobs, volume display, and volume buttons — all with real-time state sync.",
   "Icon": "icons/plugin",
   "Category": "RefPipe Audio",

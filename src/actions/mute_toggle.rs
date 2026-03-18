@@ -21,6 +21,7 @@ pub struct MuteToggleSettings {
     pub icon_color: String,
     pub icon_muted_color: String,
     pub react_to_state: bool,
+    pub auto_device_title: bool,
 }
 
 impl Default for MuteToggleSettings {
@@ -37,6 +38,7 @@ impl Default for MuteToggleSettings {
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
             react_to_state: true,
+            auto_device_title: true,
         }
     }
 }
@@ -122,8 +124,8 @@ async fn render_button(instance: &Instance, volume: f32, muted: bool, s: &MuteTo
         (s.bg_color.clone(), s.icon_color.clone())
     };
 
-    // Auto-populate device name if no custom title
-    let (display_title, title_position) = if s.title.is_empty() {
+    // Auto-populate device name as title if enabled
+    let (display_title, title_position) = if s.auto_device_title {
         (audio::devices::get_device_name(&s.device_id).await, "bottom")
     } else {
         (s.title.clone(), s.title_position.as_str())

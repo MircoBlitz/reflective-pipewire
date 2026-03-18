@@ -38,9 +38,14 @@
     <label for="react_to_state">React to volume/state</label>
   </div>
 
+  <div class="checkbox-row">
+    <input type="checkbox" id="auto_device_title" checked>
+    <label for="auto_device_title">Auto device name as title</label>
+  </div>
+
   <div class="section">
     <div class="section-title">Titel</div>
-    <input type="text" id="title" value="" class="full-width" placeholder="optional">
+    <input type="text" id="title" value="" class="full-width" placeholder="optional (ignored if auto device name enabled)">
     <div class="inline">
       <div>
         <label>Farbe</label>
@@ -109,6 +114,7 @@
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
       icon:             { type: "select",   default: "mic" },
       react_to_state:   { type: "checkbox", default: true },
+      auto_device_title:{ type: "checkbox", default: true },
       title:            { type: "text",     default: "" },
       title_color:      { type: "color",    default: "#ffffff" },
       title_size:       { type: "number",   default: 14 },
