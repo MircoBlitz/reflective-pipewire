@@ -5,8 +5,8 @@ A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amanspr
 ## Features
 
 - **Real-time state sync** across all buttons and devices via `pactl subscribe`
-- **4 action types**: Mute Toggle, Volume Knob, Volume Display, Volume Button
-- **12 built-in icons**: Mic, Headset, Headphones, Stereo, 3.5mm Jack, External DAC, Applications, Discord, OBS, Twitch, Speaker, Mixer
+- **5 action types**: Mute Toggle, Volume Knob, Volume Display, Volume Up, Volume Down
+- **18 built-in icons**: Mic, Headset, Headphones, Stereo, 3.5mm Jack, External DAC, Applications, Discord, OBS, Twitch, Speaker, Mixer, Plus, Minus, Chevron Up, Chevron Down, Volume Up, Volume Down
 - **Per-button customization**: icon colors (active/muted), background colors (active/muted)
 - **Device-aware**: all buttons watching the same device update together
 - Works with any PipeWire/PulseAudio source or sink
@@ -53,18 +53,21 @@ Read-only button that shows the current volume as a bar and percentage. Updates 
 - **Device** / **Icon** — same as Mute Toggle
 - **Icon Colors** / **Background Colors** / **Bar Color**
 
-### Volume Button (Keypad)
+### Volume Up (Keypad)
 
-Press to adjust volume. Three modes:
-
-| Mode | Behavior |
-|------|----------|
-| **Volume Up** | Increases volume by step % |
-| **Volume Down** | Decreases volume by step % |
-| **Set Fixed Volume** | Sets volume to an exact percentage |
+Press to increase volume by a configurable step.
 
 **Settings:**
-- **Device** / **Icon** / **Mode** / **Step** / **Fixed Value**
+- **Device** / **Icon** / **Step**
+- **Reflect mute state** — checkbox to enable icon color changes on mute (off by default)
+- **Icon Colors** / **Background Colors**
+
+### Volume Down (Keypad)
+
+Press to decrease volume by a configurable step.
+
+**Settings:**
+- **Device** / **Icon** / **Step**
 - **Reflect mute state** — checkbox to enable icon color changes on mute (off by default)
 - **Icon Colors** / **Background Colors**
 
