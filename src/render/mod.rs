@@ -45,15 +45,43 @@ fn title_svg(opts: &TitleOpts) -> String {
     if opts.text.is_empty() {
         return String::new();
     }
-    let y = match opts.position {
+
+    // Split text into two lines at the longest possible break point
+    let words: Vec<&str> = opts.text.split_whitespace().collect();
+    let (line1, line2) = if words.len() > 1 && opts.text.len() > 20 {
+        // Try to split roughly in half
+        let mid = words.len() / 2;
+        let l1 = words[..mid].join(" ");
+        let l2 = words[mid..].join(" ");
+        (l1, Some(l2))
+    } else {
+        (opts.text.to_string(), None)
+    };
+
+    let base_y = match opts.position {
         "middle" => 72 + opts.size as i32 / 3,
         "bottom" => 140,
         _ => 4 + opts.size as i32, // top
     };
-    format!(
+
+    let y1 = base_y;
+    let y2 = base_y + opts.size as i32 + 6;
+
+    let line1_el = format!(
         r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
-        y = y, sz = opts.size, c = opts.color, t = opts.text,
-    )
+        y = y1, sz = opts.size, c = opts.color, t = line1,
+    );
+
+    let line2_el = if let Some(l2) = line2 {
+        format!(
+            r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
+            y = y2, sz = opts.size, c = opts.color, t = l2,
+        )
+    } else {
+        String::new()
+    };
+
+    format!("{}\n  {}", line1_el, line2_el)
 }
 
 /// Render a mute toggle button as SVG.
