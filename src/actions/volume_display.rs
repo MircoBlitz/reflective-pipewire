@@ -12,10 +12,6 @@ use crate::render;
 pub struct VolumeDisplaySettings {
     pub device_id: String,
     pub icon: String,
-    pub title: String,
-    pub title_color: String,
-    pub title_size: u32,
-    pub title_position: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
@@ -28,10 +24,6 @@ impl Default for VolumeDisplaySettings {
         Self {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
-            title: String::new(),
-            title_color: "#ffffff".to_string(),
-            title_size: 14,
-            title_position: "top".to_string(),
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
@@ -112,7 +104,7 @@ async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenA
         (s.bg_color.clone(), s.icon_color.clone())
     };
     let name = device_label(&s.device_id);
-    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
+    let title = super::title_opts("", "#ffffff", 14, "top", 2, 16);
     let svg = render::volume_display(&bg, &ic, volume, muted, name, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

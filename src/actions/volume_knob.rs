@@ -12,15 +12,12 @@ use crate::render;
 pub struct VolumeKnobSettings {
     pub device_id: String,
     pub icon: String,
-    pub title: String,
-    pub title_color: String,
-    pub title_size: u32,
-    pub title_position: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
     pub icon_muted_color: String,
     pub step: u32,
+    pub max_volume: u32,
     pub react_to_state: bool,
     pub display_mode: String,
 }
@@ -30,15 +27,12 @@ impl Default for VolumeKnobSettings {
         Self {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
-            title: String::new(),
-            title_color: "#ffffff".to_string(),
-            title_size: 14,
-            title_position: "top".to_string(),
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
             step: 5,
+            max_volume: 100,
             react_to_state: true,
             display_mode: "bar".to_string(),
         }
@@ -78,7 +72,7 @@ impl Action for VolumeKnobAction {
     async fn dial_rotate(&self, _instance: &Instance, settings: &Self::Settings, ticks: i16, _pressed: bool) -> OpenActionResult<()> {
         let pct = (settings.step as i32 * ticks.abs() as i32) as u32;
         let delta = if ticks > 0 { format!("{pct}%+") } else { format!("{pct}%-") };
-        audio::adjust_volume(&settings.device_id, &delta).await;
+        audio::adjust_volume(&settings.device_id, &delta, settings.max_volume as f32 / 100.0).await;
         super::sync_all_for_device(&settings.device_id).await;
         Ok(())
     }
@@ -118,7 +112,7 @@ async fn render_knob(instance: &Instance, s: &VolumeKnobSettings) -> OpenActionR
         (s.bg_color.clone(), s.icon_color.clone())
     };
     let show_pct = s.display_mode == "percent";
-    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
+    let title = super::title_opts("", "#ffffff", 14, "top", 2, 16);
     let svg = render::volume_knob(&bg, &ic, &s.icon, volume, muted, &title, show_pct);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

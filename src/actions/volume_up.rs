@@ -21,8 +21,11 @@ pub struct VolumeUpSettings {
     pub icon_color: String,
     pub icon_muted_color: String,
     pub step: u32,
+    pub max_volume: u32,
+    pub title_enabled: bool,
+    pub title_max_lines: u32,
+    pub title_max_chars: u32,
     pub react_to_state: bool,
-    pub auto_device_title: bool,
 }
 
 impl Default for VolumeUpSettings {
@@ -33,14 +36,17 @@ impl Default for VolumeUpSettings {
             title: String::new(),
             title_color: "#ffffff".to_string(),
             title_size: 14,
-            title_position: "top".to_string(),
+            title_position: "bottom".to_string(),
+            title_enabled: true,
+            title_max_lines: 2,
+            title_max_chars: 16,
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
             step: 5,
+            max_volume: 100,
             react_to_state: false,
-            auto_device_title: true,
         }
     }
 }
@@ -80,7 +86,7 @@ impl Action for VolumeUpAction {
     }
 
     async fn key_up(&self, _instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
-        audio::adjust_volume(&settings.device_id, &format!("{}%+", settings.step)).await;
+        audio::adjust_volume(&settings.device_id, &format!("{}%+", settings.step), settings.max_volume as f32 / 100.0).await;
         super::sync_all_for_device(&settings.device_id).await;
         Ok(())
     }
@@ -112,13 +118,15 @@ async fn render_button(instance: &Instance, s: &VolumeUpSettings) -> OpenActionR
         (s.bg_color.clone(), s.icon_color.clone())
     };
 
-    let (display_title, title_position) = if s.auto_device_title {
-        (audio::devices::get_device_name(&s.device_id).await, "bottom")
+    let display_title = if !s.title_enabled {
+        String::new()
+    } else if s.title.is_empty() {
+        audio::devices::get_device_name(&s.device_id).await
     } else {
-        (s.title.clone(), s.title_position.as_str())
+        s.title.clone()
     };
 
-    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position);
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, &s.title_position, s.title_max_lines, s.title_max_chars);
     let svg = render::volume_button(&bg, &ic, &s.icon, &label, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

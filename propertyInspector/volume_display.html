@@ -16,42 +16,11 @@
     </div>
   </div>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="react_to_state" checked>
-    <label for="react_to_state">React to volume/state</label>
-  </div>
-
   <div class="section">
-    <div class="section-title">Titel</div>
-    <input type="text" id="title" value="" class="full-width" placeholder="optional">
-    <div class="inline">
-      <div>
-        <label>Farbe</label>
-        <div class="color-row">
-          <input type="color" id="title_color_picker" value="#ffffff">
-          <input type="text" id="title_color" value="#ffffff" maxlength="7">
-        </div>
-      </div>
-      <div>
-        <label>Größe</label>
-        <input type="number" id="title_size" value="14" min="8" max="32">
-      </div>
-      <div>
-        <label>Position</label>
-        <select id="title_position">
-          <option value="top">Oben</option>
-          <option value="middle">Mitte</option>
-          <option value="bottom">Unten</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Farben</div>
+    <div class="section-title">Colors <input type="checkbox" id="react_to_state" checked style="margin-left:8px"> <label for="react_to_state" style="font-weight:normal">React to volume</label></div>
     <div class="color-pair">
       <div>
-        <label>Aktiv</label>
+        <label>Active</label>
         <div class="color-row">
           <input type="color" id="icon_color_picker" value="#22c55e">
           <input type="text" id="icon_color" value="#22c55e" maxlength="7">
@@ -68,10 +37,10 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Hintergrund</div>
+    <div class="section-title">Background</div>
     <div class="color-pair">
       <div>
-        <label>Aktiv</label>
+        <label>Active</label>
         <div class="color-row">
           <input type="color" id="bg_color_picker" value="#000000">
           <input type="text" id="bg_color" value="#000000" maxlength="7">
@@ -92,10 +61,6 @@
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
       icon:             { type: "select",   default: "mic" },
       react_to_state:   { type: "checkbox", default: true },
-      title:            { type: "text",     default: "" },
-      title_color:      { type: "color",    default: "#ffffff" },
-      title_size:       { type: "number",   default: 14 },
-      title_position:   { type: "select",   default: "top" },
       icon_color:       { type: "color",    default: "#22c55e" },
       icon_muted_color: { type: "color",    default: "#ef4444" },
       bg_color:         { type: "color",    default: "#000000" },

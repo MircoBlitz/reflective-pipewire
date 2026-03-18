@@ -26,6 +26,7 @@ const connectElgatoStreamDeckSocket = (port, uuid, event, info) => {
     if (data.event === "didReceiveSettings") {
       settings = data.payload.settings || {};
       loadFields();
+      if (typeof window.onSettingsLoaded === "function") window.onSettingsLoaded();
     }
     if (data.event === "sendToPropertyInspector") {
       const payload = data.payload || {};

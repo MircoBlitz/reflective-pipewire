@@ -17,17 +17,17 @@
     <div>
       <label>Icon</label>
       <select id="icon">
-        <option value="mic">Mikrofon</option>
+        <option value="mic">Microphone</option>
         <option value="headset">Headset</option>
-        <option value="headphones">Kopfhörer</option>
-        <option value="stereo">Anlage</option>
+        <option value="headphones">Headphones</option>
+        <option value="stereo">Stereo</option>
         <option value="jack">3.5mm Jack</option>
-        <option value="dac">Externes DAC</option>
-        <option value="apps">Anwendungen</option>
+        <option value="dac">External DAC</option>
+        <option value="apps">Applications</option>
         <option value="discord">Discord</option>
         <option value="obs">OBS</option>
         <option value="twitch">Twitch</option>
-        <option value="speaker">Lautsprecher</option>
+        <option value="speaker">Speaker</option>
         <option value="mixer">Mixer</option>
       </select>
     </div>
@@ -35,11 +35,15 @@
 
   <div class="cols">
     <div>
-      <label>Step pro Tick (%)</label>
+      <label>Step per tick (%)</label>
       <input type="number" id="step" value="5" min="1" max="50">
     </div>
     <div>
-      <label>Anzeige</label>
+      <label>Volume Max (%)</label>
+      <input type="number" id="max_volume" value="100" min="100" max="150">
+    </div>
+    <div>
+      <label>Display</label>
       <div class="radio-row">
         <input type="radio" name="display_mode" id="display_mode_percent" value="percent">
         <label for="display_mode_percent">%</label>
@@ -49,42 +53,11 @@
     </div>
   </div>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="react_to_state" checked>
-    <label for="react_to_state">React to volume/state</label>
-  </div>
-
   <div class="section">
-    <div class="section-title">Titel</div>
-    <input type="text" id="title" value="" class="full-width" placeholder="optional">
-    <div class="inline" style="margin-top:8px">
-      <div>
-        <label>Farbe</label>
-        <div class="color-row">
-          <input type="color" id="title_color_picker" value="#ffffff">
-          <input type="text" id="title_color" value="#ffffff" maxlength="7">
-        </div>
-      </div>
-      <div>
-        <label>Größe</label>
-        <input type="number" id="title_size" value="14" min="8" max="32">
-      </div>
-      <div>
-        <label>Position</label>
-        <select id="title_position">
-          <option value="top">Oben</option>
-          <option value="middle">Mitte</option>
-          <option value="bottom">Unten</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Icon-Farben</div>
+    <div class="section-title">Icon colors <input type="checkbox" id="react_to_state" checked style="margin-left:8px"> <label for="react_to_state" style="font-weight:normal">React to volume</label></div>
     <div class="color-pair">
       <div>
-        <label>Aktiv</label>
+        <label>Active</label>
         <div class="color-row">
           <input type="color" id="icon_color_picker" value="#22c55e">
           <input type="text" id="icon_color" value="#22c55e" maxlength="7">
@@ -101,10 +74,10 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Hintergrund</div>
+    <div class="section-title">Background</div>
     <div class="color-pair">
       <div>
-        <label>Aktiv</label>
+        <label>Active</label>
         <div class="color-row">
           <input type="color" id="bg_color_picker" value="#000000">
           <input type="text" id="bg_color" value="#000000" maxlength="7">
@@ -125,12 +98,9 @@
       device_id:        { type: "select",  default: "@DEFAULT_AUDIO_SOURCE@" },
       icon:             { type: "select",  default: "mic" },
       step:             { type: "number",  default: 5 },
+      max_volume:       { type: "number",  default: 100 },
       display_mode:     { type: "radio",   default: "bar" },
       react_to_state:   { type: "checkbox",default: true },
-      title:            { type: "text",    default: "" },
-      title_color:      { type: "color",   default: "#ffffff" },
-      title_size:       { type: "number",  default: 14 },
-      title_position:   { type: "select",  default: "top" },
       icon_color:       { type: "color",   default: "#22c55e" },
       icon_muted_color: { type: "color",   default: "#ef4444" },
       bg_color:         { type: "color",   default: "#000000" },

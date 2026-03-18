@@ -38,6 +38,8 @@ pub struct TitleOpts<'a> {
     pub color: &'a str,
     pub size: u32,
     pub position: &'a str, // "top", "middle", "bottom"
+    pub max_lines: u32,
+    pub max_chars: u32,
 }
 
 /// Render optional title text.
@@ -46,42 +48,50 @@ fn title_svg(opts: &TitleOpts) -> String {
         return String::new();
     }
 
-    // Split text into two lines at the longest possible break point
-    let words: Vec<&str> = opts.text.split_whitespace().collect();
-    let (line1, line2) = if words.len() > 1 && opts.text.len() > 20 {
-        // Try to split roughly in half
-        let mid = words.len() / 2;
-        let l1 = words[..mid].join(" ");
-        let l2 = words[mid..].join(" ");
-        (l1, Some(l2))
-    } else {
-        (opts.text.to_string(), None)
+    let max_chars = opts.max_chars as usize;
+    let max_lines = opts.max_lines as usize;
+
+    // Word-wrap with hard-cut on overlong words
+    let mut lines: Vec<String> = Vec::new();
+    let mut current = String::new();
+
+    for word in opts.text.split_whitespace() {
+        // Hard-cut word if it exceeds max_chars
+        let word = if word.len() > max_chars { &word[..max_chars] } else { word };
+
+        if current.is_empty() {
+            current.push_str(word);
+        } else if current.len() + 1 + word.len() <= max_chars {
+            current.push(' ');
+            current.push_str(word);
+        } else {
+            lines.push(current.clone());
+            if lines.len() >= max_lines {
+                break;
+            }
+            current = word.to_string();
+        }
+    }
+    if !current.is_empty() && lines.len() < max_lines {
+        lines.push(current);
+    }
+
+    let num_lines = lines.len();
+    let line_height = opts.size as i32 + 3;
+
+    let y_start: i32 = match opts.position {
+        "middle" => 72 - ((num_lines as i32 - 1) * line_height) / 2,
+        "bottom" => 142 - (num_lines as i32 - 1) * line_height,
+        _ => opts.size as i32 + 2, // top
     };
 
-    let base_y = match opts.position {
-        "middle" => 72 + opts.size as i32 / 3,
-        "bottom" => 140,
-        _ => 4 + opts.size as i32, // top
-    };
-
-    let y1 = base_y - 14;
-    let y2 = base_y + opts.size as i32 - 16;
-
-    let line1_el = format!(
-        r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
-        y = y1, sz = opts.size, c = opts.color, t = line1,
-    );
-
-    let line2_el = if let Some(l2) = line2 {
+    lines.iter().enumerate().map(|(i, line)| {
+        let y = y_start + i as i32 * line_height;
         format!(
             r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
-            y = y2, sz = opts.size, c = opts.color, t = l2,
+            y = y, sz = opts.size, c = opts.color, t = line,
         )
-    } else {
-        String::new()
-    };
-
-    format!("{}\n  {}", line1_el, line2_el)
+    }).collect::<Vec<_>>().join("\n  ")
 }
 
 /// Render a mute toggle button as SVG.
@@ -143,13 +153,14 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
     let base = svg_strip_close(&colored);
     let title_el = title_svg(title);
     let white = "#ffffff";
+    let label_y = if title.text.is_empty() { 130 } else { 88 };
 
     format!(
         r#"{base}
-  <text x="72" y="72" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
+  <text x="72" y="{label_y}" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
   {title_el}
 </svg>"#,
-        base = base, w = white, label = label, title_el = title_el,
+        base = base, label_y = label_y, w = white, label = label, title_el = title_el,
     )
 }
 
