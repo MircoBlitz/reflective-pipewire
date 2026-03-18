@@ -19,6 +19,23 @@ pub async fn list_sources() -> Vec<AudioDevice> {
     parse_devices("sources", "source").await
 }
 
+/// Get device name from ID (special handling for defaults)
+pub async fn get_device_name(device_id: &str) -> String {
+    match device_id {
+        "@DEFAULT_AUDIO_SOURCE@" => "Default Source".to_string(),
+        "@DEFAULT_AUDIO_SINK@" => "Default Sink".to_string(),
+        id => {
+            let mut all_devices = list_sources().await;
+            all_devices.extend(list_sinks().await);
+            all_devices
+                .iter()
+                .find(|d| d.id == id)
+                .map(|d| d.description.clone())
+                .unwrap_or_else(|| id.to_string())
+        }
+    }
+}
+
 async fn parse_devices(kind: &str, label: &str) -> Vec<AudioDevice> {
     let output = Command::new("pactl")
         .args(["list", kind])
