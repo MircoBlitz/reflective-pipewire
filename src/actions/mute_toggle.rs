@@ -62,10 +62,7 @@ impl Action for MuteToggleAction {
         super::send_device_list(instance).await;
 
         // Re-render all action instances to prevent UI reset
-        tokio::spawn(async {
-            tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
-            super::sync_all_instances().await;
-        });
+        super::sync_all_instances().await;
 
         Ok(())
     }
