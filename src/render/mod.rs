@@ -118,10 +118,10 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
 
     format!(
         r#"{base}
+  <text x="72" y="72" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
   {title_el}
-  <text x="72" y="110" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
 </svg>"#,
-        base = base, title_el = title_el, w = white, label = label,
+        base = base, w = white, label = label, title_el = title_el,
     )
 }
 

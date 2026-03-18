@@ -22,6 +22,7 @@ pub struct VolumeUpSettings {
     pub icon_muted_color: String,
     pub step: u32,
     pub react_to_state: bool,
+    pub auto_device_title: bool,
 }
 
 impl Default for VolumeUpSettings {
@@ -39,6 +40,7 @@ impl Default for VolumeUpSettings {
             icon_muted_color: "#ef4444".to_string(),
             step: 5,
             react_to_state: false,
+            auto_device_title: true,
         }
     }
 }
