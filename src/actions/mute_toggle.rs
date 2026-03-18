@@ -123,13 +123,13 @@ async fn render_button(instance: &Instance, volume: f32, muted: bool, s: &MuteTo
     };
 
     // Auto-populate device name if no custom title
-    let display_title = if s.title.is_empty() {
-        audio::devices::get_device_name(&s.device_id).await
+    let (display_title, title_position) = if s.title.is_empty() {
+        (audio::devices::get_device_name(&s.device_id).await, "bottom")
     } else {
-        s.title.clone()
+        (s.title.clone(), s.title_position.as_str())
     };
 
-    let title = super::title_opts(&display_title, &s.title_color, s.title_size, &s.title_position);
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position);
     let svg = render::mute_button(&bg, &ic, &s.icon, muted, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }
