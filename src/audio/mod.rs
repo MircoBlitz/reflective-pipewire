@@ -29,9 +29,9 @@ pub async fn get_volume(device_id: &str) -> (f32, bool) {
     }
 }
 
-/// Set absolute volume. max_volume is the upper cap (e.g. 1.0 = 100%, 1.5 = 150%).
-pub async fn set_volume(device_id: &str, volume: f32, max_volume: f32) {
-    let vol_str = format!("{:.2}", volume.clamp(0.0, max_volume));
+/// Set absolute volume (0.0 - 1.0+).
+pub async fn set_volume(device_id: &str, volume: f32) {
+    let vol_str = format!("{:.2}", volume.clamp(0.0, 1.0));
     if let Err(e) = Command::new("wpctl")
         .args(["set-volume", device_id, &vol_str])
         .status()
@@ -41,14 +41,18 @@ pub async fn set_volume(device_id: &str, volume: f32, max_volume: f32) {
     }
 }
 
-/// Adjust volume relatively (e.g. "5%+" or "5%-"). max_volume caps the result.
-pub async fn adjust_volume(device_id: &str, delta: &str, max_volume: f32) {
+/// Adjust volume relatively (e.g. "5%+" or "5%-").
+pub async fn adjust_volume(device_id: &str, delta: &str) {
     let (current, _) = get_volume(device_id).await;
     let percent_str = delta.trim_end_matches(|c: char| c == '+' || c == '-');
     let percent = percent_str.trim_end_matches('%').parse::<f32>().unwrap_or(0.0) / 100.0;
     let is_increase = delta.ends_with('+');
-    let new_volume = if is_increase { current + percent } else { current - percent };
-    set_volume(device_id, new_volume, max_volume).await;
+    let new_volume = if is_increase {
+        current + percent
+    } else {
+        current - percent
+    };
+    set_volume(device_id, new_volume).await;
 }
 
 /// Toggle mute state.

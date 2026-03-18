@@ -17,17 +17,17 @@
     <div>
       <label>Icon</label>
       <select id="icon">
-        <option value="mic">Microphone</option>
+        <option value="mic">Mikrofon</option>
         <option value="headset">Headset</option>
-        <option value="headphones">Headphones</option>
-        <option value="stereo">Stereo</option>
+        <option value="headphones">Kopfhörer</option>
+        <option value="stereo">Anlage</option>
         <option value="jack">3.5mm Jack</option>
-        <option value="dac">External DAC</option>
-        <option value="apps">Applications</option>
+        <option value="dac">Externes DAC</option>
+        <option value="apps">Anwendungen</option>
         <option value="discord">Discord</option>
         <option value="obs">OBS</option>
         <option value="twitch">Twitch</option>
-        <option value="speaker">Speaker</option>
+        <option value="speaker">Lautsprecher</option>
         <option value="mixer">Mixer</option>
       </select>
     </div>
@@ -35,11 +35,11 @@
 
   <div class="cols">
     <div>
-      <label>Mode</label>
+      <label>Modus</label>
       <select id="mode">
         <option value="up">Volume Up</option>
         <option value="down">Volume Down</option>
-        <option value="set">Set fixed value</option>
+        <option value="set">Festen Wert setzen</option>
       </select>
     </div>
     <div>
@@ -47,16 +47,28 @@
       <input type="number" id="step" value="5" min="1" max="100">
     </div>
     <div>
-      <label>Fixed value (%)</label>
+      <label>Fester Wert (%)</label>
       <input type="number" id="value" value="50" min="0" max="150">
     </div>
   </div>
 
+  <div class="cols">
+    <div>
+      <label>Title</label>
+      <input type="text" id="title" value="" placeholder="optional">
+    </div>
+  </div>
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="react_to_state">
+    <label for="react_to_state">React to volume/state</label>
+  </div>
+
   <div class="section">
-    <div class="section-title">Icon colors <input type="checkbox" id="react_to_state" style="margin-left:8px"> <label for="react_to_state" style="font-weight:normal">React to volume</label></div>
+    <div class="section-title">Icon-Farben</div>
     <div class="color-pair">
       <div>
-        <label>Active</label>
+        <label>Aktiv</label>
         <div class="color-row">
           <input type="color" id="icon_color_picker" value="#22c55e">
           <input type="text" id="icon_color" value="#22c55e" maxlength="7">
@@ -73,10 +85,10 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Background</div>
+    <div class="section-title">Hintergrund</div>
     <div class="color-pair">
       <div>
-        <label>Active</label>
+        <label>Aktiv</label>
         <div class="color-row">
           <input type="color" id="bg_color_picker" value="#000000">
           <input type="text" id="bg_color" value="#000000" maxlength="7">
@@ -96,6 +108,7 @@
     window.piFields = {
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
       icon:             { type: "select",   default: "mic" },
+      title:            { type: "text",     default: "" },
       mode:             { type: "select",   default: "up" },
       step:             { type: "number",   default: 5 },
       value:            { type: "number",   default: 50 },

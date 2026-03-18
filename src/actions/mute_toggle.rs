@@ -12,18 +12,18 @@ use crate::render;
 pub struct MuteToggleSettings {
     pub device_id: String,
     pub icon: String,
-    pub title: String,
-    pub title_color: String,
-    pub title_size: u32,
-    pub title_position: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
     pub icon_muted_color: String,
+    pub react_to_state: bool,
+    pub title: String,
     pub title_enabled: bool,
+    pub title_color: String,
+    pub title_size: u32,
+    pub title_position: String,
     pub title_max_lines: u32,
     pub title_max_chars: u32,
-    pub react_to_state: bool,
 }
 
 impl Default for MuteToggleSettings {
@@ -31,18 +31,18 @@ impl Default for MuteToggleSettings {
         Self {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
-            title: String::new(),
-            title_color: "#ffffff".to_string(),
-            title_size: 14,
-            title_position: "bottom".to_string(),
-            title_enabled: true,
-            title_max_lines: 2,
-            title_max_chars: 16,
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
             react_to_state: true,
+            title: String::new(),
+            title_enabled: true,
+            title_color: "#ffffff".to_string(),
+            title_size: 14,
+            title_position: "bottom".to_string(),
+            title_max_lines: 2,
+            title_max_chars: 16,
         }
     }
 }
@@ -135,7 +135,6 @@ async fn render_button(instance: &Instance, volume: f32, muted: bool, s: &MuteTo
     } else {
         s.title.clone()
     };
-
     let title = super::title_opts(&display_title, &s.title_color, s.title_size, &s.title_position, s.title_max_lines, s.title_max_chars);
     let svg = render::mute_button(&bg, &ic, &s.icon, muted, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await

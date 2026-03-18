@@ -56,9 +56,7 @@ fn title_svg(opts: &TitleOpts) -> String {
     let mut current = String::new();
 
     for word in opts.text.split_whitespace() {
-        // Hard-cut word if it exceeds max_chars
         let word = if word.len() > max_chars { &word[..max_chars] } else { word };
-
         if current.is_empty() {
             current.push_str(word);
         } else if current.len() + 1 + word.len() <= max_chars {
@@ -66,9 +64,7 @@ fn title_svg(opts: &TitleOpts) -> String {
             current.push_str(word);
         } else {
             lines.push(current.clone());
-            if lines.len() >= max_lines {
-                break;
-            }
+            if lines.len() >= max_lines { break; }
             current = word.to_string();
         }
     }
@@ -79,10 +75,12 @@ fn title_svg(opts: &TitleOpts) -> String {
     let num_lines = lines.len();
     let line_height = opts.size as i32 + 3;
 
+    // "label": centered in the space between % display (bottom ~y=50) and bar (top y=120) → center y=85
     let y_start: i32 = match opts.position {
+        "label"  => 85 - ((num_lines as i32 - 1) * line_height) / 2,
         "middle" => 72 - ((num_lines as i32 - 1) * line_height) / 2,
         "bottom" => 142 - (num_lines as i32 - 1) * line_height,
-        _ => opts.size as i32 + 2, // top
+        _        => opts.size as i32 + 2, // top
     };
 
     lines.iter().enumerate().map(|(i, line)| {
@@ -153,59 +151,14 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
     let base = svg_strip_close(&colored);
     let title_el = title_svg(title);
     let white = "#ffffff";
-    let label_y = if title.text.is_empty() { 130 } else { 88 };
 
     format!(
         r#"{base}
-  <text x="72" y="{label_y}" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
+  <text x="72" y="72" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
   {title_el}
 </svg>"#,
-        base = base, label_y = label_y, w = white, label = label, title_el = title_el,
+        base = base, w = white, label = label, title_el = title_el,
     )
-}
-
-/// Build device name element, centered. Auto-wraps to 2 lines and shrinks font if needed.
-fn device_name_svg(name: &str, color: &str) -> String {
-    let max_w: f32 = 128.0;
-    let base_size: f32 = 22.0;
-    let char_w_ratio: f32 = 0.55; // avg char width / font size
-
-    let text_w = name.len() as f32 * base_size * char_w_ratio;
-
-    if text_w <= max_w {
-        // Single line, fits at base size
-        return format!(
-            r#"<text x="72" y="85" text-anchor="middle" font-family="sans-serif" font-size="22" fill="{c}" opacity="0.7">{n}</text>"#,
-            c = color, n = name,
-        );
-    }
-
-    // Try to split into 2 lines at a space near the middle
-    let mid = name.len() / 2;
-    let split = name[..mid].rfind(' ')
-        .or_else(|| name[mid..].find(' ').map(|i| i + mid));
-
-    if let Some(pos) = split {
-        let line1 = &name[..pos];
-        let line2 = &name[pos + 1..];
-        let longest = line1.len().max(line2.len()) as f32;
-        // Shrink font to fit the longest line, min 12px
-        let size = (max_w / (longest * char_w_ratio)).min(base_size).max(12.0) as u32;
-        let y1 = 78;
-        let y2 = 78 + size + 3;
-        format!(
-            r#"<text x="72" y="{y1}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l1}</text>
-  <text x="72" y="{y2}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l2}</text>"#,
-            y1 = y1, y2 = y2, sz = size, c = color, l1 = line1, l2 = line2,
-        )
-    } else {
-        // No space to split — shrink to fit single line
-        let size = (max_w / (name.len() as f32 * char_w_ratio)).max(12.0) as u32;
-        format!(
-            r#"<text x="72" y="85" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{n}</text>"#,
-            sz = size, c = color, n = name,
-        )
-    }
 }
 
 /// Render a volume display: large percentage + device name, no icon.
@@ -214,7 +167,6 @@ pub fn volume_display(
     text_color: &str,
     volume: f32,
     muted: bool,
-    device_name: &str,
     title: &TitleOpts,
 ) -> String {
     let pct = (volume * 100.0).round() as u32;
@@ -222,23 +174,20 @@ pub fn volume_display(
     let bar_opacity = if muted { "0.3" } else { "1.0" };
     let text_opacity = if muted { "0.4" } else { "1.0" };
     let title_el = title_svg(title);
-    let name_el = device_name_svg(device_name, text_color);
 
     format!(
         r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
   <rect width="144" height="144" rx="16" fill="{bg}"/>
-  {title_el}
   <text x="72" y="45" text-anchor="middle" font-family="sans-serif" font-size="48" font-weight="bold" fill="{tc}" opacity="{to}">{pct}%</text>
-  {name_el}
+  {title_el}
   <rect x="12" y="120" width="120" height="12" rx="6" fill="{tc}" opacity="0.12"/>
   <rect x="12" y="120" width="{bar_w}" height="12" rx="6" fill="{bar_c}" opacity="{bar_o}"/>
 </svg>"#,
         bg = bg_color,
-        title_el = title_el,
         tc = text_color,
         to = text_opacity,
         pct = pct,
-        name_el = name_el,
+        title_el = title_el,
         bar_w = bar_width,
         bar_c = text_color,
         bar_o = bar_opacity,

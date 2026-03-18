@@ -6,21 +6,54 @@
   <link rel="stylesheet" href="shared.css">
 </head>
 <body>
-  <div class="cols">
-    <div>
-      <label>Device</label>
-      <select id="device_id">
-        <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
-        <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
-      </select>
-    </div>
+  <div class="device-row">
+    <label>Device</label>
+    <select id="device_id">
+      <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
+      <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
+    </select>
   </div>
 
   <div class="section">
-    <div class="section-title">Colors <input type="checkbox" id="react_to_state" checked style="margin-left:8px"> <label for="react_to_state" style="font-weight:normal">React to volume</label></div>
+    <div class="section-title">Device Label <input type="checkbox" id="title_enabled" checked style="margin-left:8px"> <label for="title_enabled" style="font-weight:normal">Show</label></div>
+    <div id="title_section">
+      <input type="text" id="title" value="" class="full-width" placeholder="empty = device name">
+      <div class="inline">
+        <div>
+          <label>Max lines</label>
+          <input type="number" id="title_max_lines" value="2" min="1" max="3">
+        </div>
+        <div>
+          <label>Max chars</label>
+          <input type="number" id="title_max_chars" value="16" min="8" max="32">
+        </div>
+      </div>
+      <div class="inline">
+        <div>
+          <label>Color</label>
+          <div class="color-row">
+            <input type="color" id="title_color_picker" value="#ffffff">
+            <input type="text" id="title_color" value="#ffffff" maxlength="7">
+          </div>
+        </div>
+        <div>
+          <label>Size</label>
+          <input type="number" id="title_size" value="14" min="8" max="32">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="react_to_state" checked>
+    <label for="react_to_state">React to volume/state</label>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Farben</div>
     <div class="color-pair">
       <div>
-        <label>Active</label>
+        <label>Aktiv</label>
         <div class="color-row">
           <input type="color" id="icon_color_picker" value="#22c55e">
           <input type="text" id="icon_color" value="#22c55e" maxlength="7">
@@ -37,10 +70,10 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Background</div>
+    <div class="section-title">Hintergrund</div>
     <div class="color-pair">
       <div>
-        <label>Active</label>
+        <label>Aktiv</label>
         <div class="color-row">
           <input type="color" id="bg_color_picker" value="#000000">
           <input type="text" id="bg_color" value="#000000" maxlength="7">
@@ -59,8 +92,13 @@
   <script>
     window.piFields = {
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
-      icon:             { type: "select",   default: "mic" },
       react_to_state:   { type: "checkbox", default: true },
+      title_enabled:    { type: "checkbox", default: true },
+      title:            { type: "text",     default: "" },
+      title_max_lines:  { type: "number",   default: 2 },
+      title_max_chars:  { type: "number",   default: 16 },
+      title_color:      { type: "color",    default: "#ffffff" },
+      title_size:       { type: "number",   default: 14 },
       icon_color:       { type: "color",    default: "#22c55e" },
       icon_muted_color: { type: "color",    default: "#ef4444" },
       bg_color:         { type: "color",    default: "#000000" },
@@ -68,5 +106,13 @@
     };
   </script>
   <script src="shared.js"></script>
+  <script>
+    function applyTitleToggle() {
+      document.getElementById('title_section').style.display =
+        document.getElementById('title_enabled').checked ? '' : 'none';
+    }
+    document.getElementById('title_enabled').addEventListener('change', applyTitleToggle);
+    window.onSettingsLoaded = applyTitleToggle;
+  </script>
 </body>
 </html>
