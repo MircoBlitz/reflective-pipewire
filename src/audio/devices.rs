@@ -37,60 +37,82 @@ pub async fn get_device_name(device_id: &str) -> String {
 }
 
 async fn parse_devices(kind: &str, label: &str) -> Vec<AudioDevice> {
-    let output = Command::new("pactl")
-        .args(["list", kind])
+    let output = Command::new("pw-dump")
+        .args(["Node"])
         .output()
         .await;
 
     let Ok(out) = output else {
-        log::error!("Failed to list {kind}");
+        log::error!("Failed to run pw-dump for {kind}");
         return vec![];
     };
 
     let text = String::from_utf8_lossy(&out.stdout);
-    let mut devices = vec![];
-    let mut current_id = String::new();
-    let mut current_name = String::new();
-    let mut current_desc = String::new();
+    log::debug!("pw-dump output length: {} bytes for {kind}", text.len());
+    let media_class = if kind == "sinks" { "Audio/Sink" } else { "Audio/Source" };
 
-    for line in text.lines() {
-        let trimmed = line.trim();
-        // "Sink #63" or "Source #62"
-        if trimmed.starts_with("Sink #") || trimmed.starts_with("Source #") {
-            if !current_id.is_empty() {
-                devices.push(AudioDevice {
-                    id: current_id.clone(),
-                    name: current_name.clone(),
-                    description: if current_desc.is_empty() {
-                        current_name.clone()
-                    } else {
-                        current_desc.clone()
-                    },
-                    kind: label.to_string(),
-                });
+    // Parse JSON array
+    let Ok(nodes) = serde_json::from_str::<serde_json::Value>(&text) else {
+        log::error!("Failed to parse pw-dump JSON for {kind}: {}", text.chars().take(200).collect::<String>());
+        return vec![];
+    };
+
+    let mut devices = vec![];
+
+    log::warn!("JSON parsed for {kind}: is_array={}", nodes.is_array());
+
+    if let Some(nodes_arr) = nodes.as_array() {
+        log::warn!("Found {} total nodes in pw-dump for {kind}", nodes_arr.len());
+        for (idx, node) in nodes_arr.iter().enumerate() {
+            let Some(info) = node.get("info").and_then(|i| i.as_object()) else {
+                log::debug!("Node {} has no info", idx);
+                continue;
+            };
+            let Some(props) = info.get("props").and_then(|p| p.as_object()) else {
+                log::debug!("Node {} has no props", idx);
+                continue;
+            };
+
+            // Check media class
+            let class = match props.get("media.class").and_then(|v| v.as_str()) {
+                Some(c) => c,
+                None => {
+                    log::debug!("Node {} has no media.class", idx);
+                    continue;
+                }
+            };
+
+            log::debug!("Node {}: media.class={}, looking for {}", idx, class, media_class);
+            if !class.contains(media_class) {
+                continue;
             }
-            current_id = trimmed.split('#').nth(1).unwrap_or("").trim().to_string();
-            current_name.clear();
-            current_desc.clear();
-        } else if trimmed.starts_with("Name:") {
-            current_name = trimmed.strip_prefix("Name:").unwrap_or("").trim().to_string();
-        } else if trimmed.starts_with("Description:") {
-            current_desc = trimmed.strip_prefix("Description:").unwrap_or("").trim().to_string();
+
+            // Get ID
+            let id = match node.get("id").and_then(|v| v.as_u64()) {
+                Some(id) => id.to_string(),
+                None => continue,
+            };
+
+            // Get nick and description
+            let nick = props
+                .get("node.nick")
+                .and_then(|v| v.as_str())
+                .unwrap_or("Unknown");
+            let description = props
+                .get("node.description")
+                .and_then(|v| v.as_str())
+                .unwrap_or(nick);
+
+            log::debug!("  Added {}: {} ({})", id, nick, class);
+            devices.push(AudioDevice {
+                id,
+                name: nick.to_string(),
+                description: description.to_string(),
+                kind: label.to_string(),
+            });
         }
     }
-    // Push last device
-    if !current_id.is_empty() {
-        devices.push(AudioDevice {
-            id: current_id,
-            name: current_name.clone(),
-            description: if current_desc.is_empty() {
-                current_name
-            } else {
-                current_desc
-            },
-            kind: label.to_string(),
-        });
-    }
 
+    log::info!("parse_devices({kind}) found {} devices", devices.len());
     devices
 }
