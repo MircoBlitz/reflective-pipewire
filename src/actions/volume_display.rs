@@ -54,6 +54,12 @@ impl Action for VolumeDisplayAction {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         render_display(instance, settings).await?;
         super::send_device_list(instance).await;
+
+        tokio::spawn(async {
+            tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
+            sync_all_instances().await;
+        });
+
         Ok(())
     }
 

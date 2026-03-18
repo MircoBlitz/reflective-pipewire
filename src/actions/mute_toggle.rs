@@ -55,6 +55,13 @@ impl Action for MuteToggleAction {
         let (vol, muted) = audio::get_volume(&settings.device_id).await;
         render_button(instance, vol, muted, settings).await?;
         super::send_device_list(instance).await;
+
+        // Delay to allow all will_appear calls to complete before syncing
+        tokio::spawn(async {
+            tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
+            sync_all_instances().await;
+        });
+
         Ok(())
     }
 
