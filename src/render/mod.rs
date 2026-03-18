@@ -127,7 +127,7 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
 /// Build device name element, centered. Auto-wraps to 2 lines and shrinks font if needed.
 fn device_name_svg(name: &str, color: &str) -> String {
     let max_w: f32 = 128.0;
-    let base_size: f32 = 18.0;
+    let base_size: f32 = 22.0;
     let char_w_ratio: f32 = 0.55; // avg char width / font size
 
     let text_w = name.len() as f32 * base_size * char_w_ratio;
@@ -135,7 +135,7 @@ fn device_name_svg(name: &str, color: &str) -> String {
     if text_w <= max_w {
         // Single line, fits at base size
         return format!(
-            r#"<text x="72" y="100" text-anchor="middle" font-family="sans-serif" font-size="18" fill="{c}" opacity="0.7">{n}</text>"#,
+            r#"<text x="72" y="85" text-anchor="middle" font-family="sans-serif" font-size="22" fill="{c}" opacity="0.7">{n}</text>"#,
             c = color, n = name,
         );
     }
@@ -149,10 +149,10 @@ fn device_name_svg(name: &str, color: &str) -> String {
         let line1 = &name[..pos];
         let line2 = &name[pos + 1..];
         let longest = line1.len().max(line2.len()) as f32;
-        // Shrink font to fit the longest line, min 10px
-        let size = (max_w / (longest * char_w_ratio)).min(base_size).max(10.0) as u32;
-        let y1 = 93;
-        let y2 = 93 + size + 2;
+        // Shrink font to fit the longest line, min 12px
+        let size = (max_w / (longest * char_w_ratio)).min(base_size).max(12.0) as u32;
+        let y1 = 78;
+        let y2 = 78 + size + 3;
         format!(
             r#"<text x="72" y="{y1}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l1}</text>
   <text x="72" y="{y2}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l2}</text>"#,
@@ -160,9 +160,9 @@ fn device_name_svg(name: &str, color: &str) -> String {
         )
     } else {
         // No space to split — shrink to fit single line
-        let size = (max_w / (name.len() as f32 * char_w_ratio)).max(10.0) as u32;
+        let size = (max_w / (name.len() as f32 * char_w_ratio)).max(12.0) as u32;
         format!(
-            r#"<text x="72" y="100" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{n}</text>"#,
+            r#"<text x="72" y="85" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{n}</text>"#,
             sz = size, c = color, n = name,
         )
     }
@@ -188,7 +188,7 @@ pub fn volume_display(
         r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
   <rect width="144" height="144" rx="16" fill="{bg}"/>
   {title_el}
-  <text x="72" y="50" text-anchor="middle" font-family="sans-serif" font-size="48" font-weight="bold" fill="{tc}" opacity="{to}">{pct}%</text>
+  <text x="72" y="45" text-anchor="middle" font-family="sans-serif" font-size="48" font-weight="bold" fill="{tc}" opacity="{to}">{pct}%</text>
   {name_el}
   <rect x="12" y="120" width="120" height="12" rx="6" fill="{tc}" opacity="0.12"/>
   <rect x="12" y="120" width="{bar_w}" height="12" rx="6" fill="{bar_c}" opacity="{bar_o}"/>
