@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
+  <rect width="144" height="144" rx="16" fill="#0a0a0a"/>
+  <!-- Main icon -->
+  <g opacity="0.85">
+    <!-- DAC box -->
+    <rect x="24" y="26" width="96" height="40" rx="4" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <!-- USB input (left) -->
+    <rect x="36" y="38" width="10" height="16" rx="2" fill="#ffffff"/>
+    <!-- LED indicator -->
+    <circle cx="72" cy="46" r="3" fill="#ffffff"/>
+    <!-- Jack output (right) -->
+    <circle cx="100" cy="46" r="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <circle cx="100" cy="46" r="2" fill="#ffffff"/>
+  </g>
+  <!-- Mirror line -->
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <!-- Reflection -->
+  <g opacity="0.15">
+    <rect x="24" y="114" width="96" height="40" rx="4" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <rect x="36" y="126" width="10" height="16" rx="2" fill="#ffffff"/>
+    <circle cx="72" cy="134" r="3" fill="#ffffff"/>
+    <circle cx="100" cy="134" r="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <circle cx="100" cy="134" r="2" fill="#ffffff"/>
+  </g>
+</svg>

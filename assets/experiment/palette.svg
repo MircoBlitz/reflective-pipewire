@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320">
+  <rect width="600" height="320" fill="#0a0a0a"/>
+  <style>
+    text { font-family: monospace; font-size: 11px; fill: #ffffff; opacity: 0.6; }
+    .label { font-size: 13px; font-weight: bold; opacity: 1; }
+  </style>
+
+  <!-- Row 1: Base -->
+  <text x="20" y="30" class="label">Base</text>
+  <rect x="20" y="40" width="60" height="60" rx="8" fill="#0a0a0a" stroke="#333" stroke-width="1"/>
+  <text x="22" y="118">#0a0a0a</text>
+  <rect x="90" y="40" width="60" height="60" rx="8" fill="#1a1a1a"/>
+  <text x="92" y="118">#1a1a1a</text>
+  <rect x="160" y="40" width="60" height="60" rx="8" fill="#2a2a2a"/>
+  <text x="162" y="118">#2a2a2a</text>
+  <rect x="230" y="40" width="60" height="60" rx="8" fill="#ffffff"/>
+  <text x="232" y="118">#ffffff</text>
+  <rect x="300" y="40" width="60" height="60" rx="8" fill="#ffffff" opacity="0.85"/>
+  <text x="302" y="118">85%</text>
+  <rect x="370" y="40" width="60" height="60" rx="8" fill="#ffffff" opacity="0.35"/>
+  <text x="372" y="118">35%</text>
+  <rect x="440" y="40" width="60" height="60" rx="8" fill="#ffffff" opacity="0.15"/>
+  <text x="442" y="118">15%</text>
+
+  <!-- Row 2: Accent spectrum (volume steps) -->
+  <text x="20" y="155" class="label">Accent</text>
+  <rect x="20" y="165" width="60" height="60" rx="8" fill="#22c55e"/>
+  <text x="22" y="243">#22c55e</text>
+  <rect x="90" y="165" width="60" height="60" rx="8" fill="#5cb844"/>
+  <text x="92" y="243">#5cb844</text>
+  <rect x="160" y="165" width="60" height="60" rx="8" fill="#a3b532"/>
+  <text x="162" y="243">#a3b532</text>
+  <rect x="230" y="165" width="60" height="60" rx="8" fill="#d98a3a"/>
+  <text x="232" y="243">#d98a3a</text>
+  <rect x="300" y="165" width="60" height="60" rx="8" fill="#ef4444"/>
+  <text x="302" y="243">#ef4444</text>
+  <rect x="370" y="165" width="60" height="60" rx="8" fill="#ff4444"/>
+  <text x="372" y="243">#ff4444</text>
+  <rect x="440" y="165" width="60" height="60" rx="8" fill="#b91c1c"/>
+  <text x="442" y="243">#b91c1c</text>
+
+  <!-- Row 3: Derived / muted -->
+  <text x="20" y="280" class="label">Muted</text>
+  <rect x="20" y="290" width="60" height="20" rx="4" fill="#22c55e" opacity="0.5"/>
+  <rect x="90" y="290" width="60" height="20" rx="4" fill="#5cb844" opacity="0.5"/>
+  <rect x="160" y="290" width="60" height="20" rx="4" fill="#a3b532" opacity="0.5"/>
+  <rect x="230" y="290" width="60" height="20" rx="4" fill="#d98a3a" opacity="0.5"/>
+  <rect x="300" y="290" width="60" height="20" rx="4" fill="#ef4444" opacity="0.5"/>
+  <rect x="370" y="290" width="60" height="20" rx="4" fill="#ff4444" opacity="0.5"/>
+  <rect x="440" y="290" width="60" height="20" rx="4" fill="#b91c1c" opacity="0.5"/>
+</svg>

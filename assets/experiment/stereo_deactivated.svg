@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
+  <rect width="144" height="144" rx="16" fill="#0a0a0a"/>
+  <!-- Main icon (dimmed) -->
+  <g opacity="0.35">
+    <rect x="22" y="16" width="100" height="56" rx="6" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <rect x="32" y="24" width="50" height="14" rx="2" fill="#ffffff"/>
+    <circle cx="100" cy="31" r="8" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <circle cx="100" cy="31" r="2" fill="#ffffff"/>
+    <rect x="32" y="48" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="46" y="48" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="60" y="48" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="74" y="48" width="10" height="6" rx="2" fill="#ffffff"/>
+  </g>
+  <!-- Strike-through diagonal -->
+  <line x1="40" y1="14" x2="104" y2="78" stroke="#ff4444" stroke-width="3.5" opacity="0.85" stroke-linecap="round"/>
+  <!-- Mirror line -->
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <!-- Reflection -->
+  <g opacity="0.08">
+    <rect x="22" y="108" width="100" height="56" rx="6" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <rect x="32" y="142" width="50" height="14" rx="2" fill="#ffffff"/>
+    <circle cx="100" cy="149" r="8" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <circle cx="100" cy="149" r="2" fill="#ffffff"/>
+    <rect x="32" y="126" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="46" y="126" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="60" y="126" width="10" height="6" rx="2" fill="#ffffff"/>
+    <rect x="74" y="126" width="10" height="6" rx="2" fill="#ffffff"/>
+    <line x1="40" y1="166" x2="104" y2="102" stroke="#ff4444" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+</svg>

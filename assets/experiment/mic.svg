@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
+  <rect width="144" height="144" rx="16" fill="#0a0a0a"/>
+  <!-- Main icon -->
+  <g opacity="0.85">
+    <rect x="60" y="8" width="24" height="46" rx="12" fill="#ffffff"/>
+    <path d="M49 54 Q49 68 72 68 Q95 68 95 54" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <line x1="72" y1="68" x2="72" y2="82" stroke="#ffffff" stroke-width="3"/>
+    <line x1="56" y1="82" x2="88" y2="82" stroke="#ffffff" stroke-width="3"/>
+  </g>
+  <!-- Mirror line -->
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <!-- Reflection -->
+  <g opacity="0.15">
+    <line x1="56" y1="102" x2="88" y2="102" stroke="#ffffff" stroke-width="3"/>
+    <line x1="72" y1="102" x2="72" y2="116" stroke="#ffffff" stroke-width="3"/>
+    <path d="M49 148 Q49 116 72 116 Q95 116 95 148" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <rect x="60" y="126" width="24" height="46" rx="12" fill="#ffffff"/>
+  </g>
+</svg>
