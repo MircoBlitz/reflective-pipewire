@@ -56,8 +56,8 @@ impl Action for VolumeDisplayAction {
         super::send_device_list(instance).await;
 
         tokio::spawn(async {
-            tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
-            sync_all_instances().await;
+            tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+            super::sync_all_instances().await;
         });
 
         Ok(())

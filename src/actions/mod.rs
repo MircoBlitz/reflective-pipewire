@@ -23,6 +23,15 @@ pub async fn sync_all_for_device(device_id: &str) {
     volume_down::sync_for_device(device_id).await;
 }
 
+/// Sync ALL action instances (all types) - called when layout changes
+pub async fn sync_all_instances() {
+    mute_toggle::sync_all_instances().await;
+    volume_knob::sync_all_instances().await;
+    volume_display::sync_all_instances().await;
+    volume_up::sync_all_instances().await;
+    volume_down::sync_all_instances().await;
+}
+
 /// Send the list of available audio devices to a Property Inspector.
 pub async fn send_device_list(instance: &Instance) {
     let mut all_devices = vec![];
