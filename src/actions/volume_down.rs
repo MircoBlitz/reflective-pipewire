@@ -59,7 +59,10 @@ impl Action for VolumeDownAction {
         render_button(instance, settings).await?;
         super::send_device_list(instance).await;
 
-        super::sync_all_instances().await;
+        tokio::spawn(async {
+            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+            super::sync_all_instances().await;
+        });
 
         Ok(())
     }
@@ -86,7 +89,7 @@ impl Action for VolumeDownAction {
 pub async fn sync_all_instances() {
     for inst in visible_instances(VolumeDownAction::UUID).await {
         let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
-        if s.react_to_state { let _ = render_button(&inst, &s).await; }
+        let _ = render_button(&inst, &s).await;
     }
 }
 
