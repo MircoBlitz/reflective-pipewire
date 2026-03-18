@@ -390,7 +390,7 @@ dependencies = [
 
 [[package]]
 name = "reflective-pipewire"
-version = "0.2.25"
+version = "0.2.34"
 dependencies = [
  "async-trait",
  "dashmap",

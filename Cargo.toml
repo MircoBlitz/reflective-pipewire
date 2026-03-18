@@ -1,6 +1,6 @@
 [package]
 name = "reflective-pipewire"
-version = "0.2.25"
+version = "0.2.34"
 edition = "2021"
 description = "Reactive PipeWire Audio Suite for OpenDeck"
 authors = ["MircoBlitz"]
