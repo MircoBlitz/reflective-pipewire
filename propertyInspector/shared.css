@@ -14,16 +14,17 @@ label {
 }
 label:first-child { margin-top: 0; }
 
-/* Two-column flex row */
+/* Full-width stacked form fields */
 .cols {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 12px;
 }
 .cols > div {
-  flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
-.cols > div > label { margin-top: 0; }
+.cols > div > label { margin-top: 0; margin-bottom: 4px; }
 .cols > div > select,
 .cols > div > input { width: 100%; box-sizing: border-box; }
 
@@ -31,10 +32,13 @@ label:first-child { margin-top: 0; }
 .inline {
   display: flex;
   gap: 8px;
-  align-items: flex-end;
+  flex-wrap: wrap;
 }
-.inline > div { flex: 1; min-width: 0; }
-.inline > div > label { margin-top: 0; }
+.inline > div {
+  flex: 1 1 calc(50% - 4px);
+  min-width: 100px;
+}
+.inline > div > label { margin-top: 0; margin-bottom: 4px; display: block; }
 .inline > div > input,
 .inline > div > select { width: 100%; box-sizing: border-box; }
 
@@ -53,9 +57,13 @@ label:first-child { margin-top: 0; }
 .color-pair {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
-.color-pair > div { flex: 1; min-width: 0; }
-.color-pair > div > label { margin-top: 0; font-size: 11px; }
+.color-pair > div {
+  flex: 1 1 calc(50% - 4px);
+  min-width: 100px;
+}
+.color-pair > div > label { margin-top: 0; margin-bottom: 4px; font-size: 11px; display: block; }
 
 /* Form elements */
 input[type="color"] {

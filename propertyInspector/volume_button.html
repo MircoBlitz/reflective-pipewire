@@ -6,43 +6,58 @@
   <link rel="stylesheet" href="shared.css">
 </head>
 <body>
-  <label>Device</label>
-  <select id="device_id" class="full-width">
-    <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
-    <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
-  </select>
+  <div class="cols">
+    <div>
+      <label>Device</label>
+      <select id="device_id">
+        <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
+        <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
+      </select>
+    </div>
+    <div>
+      <label>Icon</label>
+      <select id="icon">
+        <option value="mic">Mikrofon</option>
+        <option value="headset">Headset</option>
+        <option value="headphones">Kopfhörer</option>
+        <option value="stereo">Anlage</option>
+        <option value="jack">3.5mm Jack</option>
+        <option value="dac">Externes DAC</option>
+        <option value="apps">Anwendungen</option>
+        <option value="discord">Discord</option>
+        <option value="obs">OBS</option>
+        <option value="twitch">Twitch</option>
+        <option value="speaker">Lautsprecher</option>
+        <option value="mixer">Mixer</option>
+      </select>
+    </div>
+  </div>
 
-  <label>Icon</label>
-  <select id="icon" class="full-width">
-    <option value="mic">Mikrofon</option>
-    <option value="headset">Headset</option>
-    <option value="headphones">Kopfhörer</option>
-    <option value="stereo">Anlage</option>
-    <option value="jack">3.5mm Jack</option>
-    <option value="dac">Externes DAC</option>
-    <option value="apps">Anwendungen</option>
-    <option value="discord">Discord</option>
-    <option value="obs">OBS</option>
-    <option value="twitch">Twitch</option>
-    <option value="speaker">Lautsprecher</option>
-    <option value="mixer">Mixer</option>
-  </select>
+  <div class="cols">
+    <div>
+      <label>Modus</label>
+      <select id="mode">
+        <option value="up">Volume Up</option>
+        <option value="down">Volume Down</option>
+        <option value="set">Festen Wert setzen</option>
+      </select>
+    </div>
+    <div>
+      <label>Step (%)</label>
+      <input type="number" id="step" value="5" min="1" max="100">
+    </div>
+    <div>
+      <label>Fester Wert (%)</label>
+      <input type="number" id="value" value="50" min="0" max="150">
+    </div>
+  </div>
 
-  <label>Title</label>
-  <input type="text" id="title" value="" class="full-width" placeholder="optional">
-
-  <label>Modus</label>
-  <select id="mode" class="full-width">
-    <option value="up">Volume Up</option>
-    <option value="down">Volume Down</option>
-    <option value="set">Festen Wert setzen</option>
-  </select>
-
-  <label>Step (%)</label>
-  <input type="number" id="step" value="5" min="1" max="100" class="full-width">
-
-  <label>Fester Wert (%) — nur bei "Festen Wert setzen"</label>
-  <input type="number" id="value" value="50" min="0" max="150" class="full-width">
+  <div class="cols">
+    <div>
+      <label>Title</label>
+      <input type="text" id="title" value="" placeholder="optional">
+    </div>
+  </div>
 
   <div class="checkbox-row">
     <input type="checkbox" id="react_to_state">
@@ -51,29 +66,41 @@
 
   <div class="section">
     <div class="section-title">Icon-Farben</div>
-    <label>Aktiv</label>
-    <div class="color-row">
-      <input type="color" id="icon_color_picker" value="#22c55e">
-      <input type="text" id="icon_color" value="#22c55e" maxlength="7">
-    </div>
-    <label>Muted</label>
-    <div class="color-row">
-      <input type="color" id="icon_muted_color_picker" value="#ef4444">
-      <input type="text" id="icon_muted_color" value="#ef4444" maxlength="7">
+    <div class="color-pair">
+      <div>
+        <label>Aktiv</label>
+        <div class="color-row">
+          <input type="color" id="icon_color_picker" value="#22c55e">
+          <input type="text" id="icon_color" value="#22c55e" maxlength="7">
+        </div>
+      </div>
+      <div>
+        <label>Muted</label>
+        <div class="color-row">
+          <input type="color" id="icon_muted_color_picker" value="#ef4444">
+          <input type="text" id="icon_muted_color" value="#ef4444" maxlength="7">
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="section">
     <div class="section-title">Hintergrund</div>
-    <label>Aktiv</label>
-    <div class="color-row">
-      <input type="color" id="bg_color_picker" value="#000000">
-      <input type="text" id="bg_color" value="#000000" maxlength="7">
-    </div>
-    <label>Muted</label>
-    <div class="color-row">
-      <input type="color" id="bg_muted_color_picker" value="#000000">
-      <input type="text" id="bg_muted_color" value="#000000" maxlength="7">
+    <div class="color-pair">
+      <div>
+        <label>Aktiv</label>
+        <div class="color-row">
+          <input type="color" id="bg_color_picker" value="#000000">
+          <input type="text" id="bg_color" value="#000000" maxlength="7">
+        </div>
+      </div>
+      <div>
+        <label>Muted</label>
+        <div class="color-row">
+          <input type="color" id="bg_muted_color_picker" value="#000000">
+          <input type="text" id="bg_muted_color" value="#000000" maxlength="7">
+        </div>
+      </div>
     </div>
   </div>
 

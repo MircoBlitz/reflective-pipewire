@@ -6,11 +6,15 @@
   <link rel="stylesheet" href="shared.css">
 </head>
 <body>
-  <label>Device</label>
-  <select id="device_id" class="full-width">
-    <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
-    <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
-  </select>
+  <div class="cols">
+    <div>
+      <label>Device</label>
+      <select id="device_id">
+        <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
+        <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
+      </select>
+    </div>
+  </div>
 
   <div class="checkbox-row">
     <input type="checkbox" id="react_to_state" checked>
@@ -20,7 +24,7 @@
   <div class="section">
     <div class="section-title">Titel</div>
     <input type="text" id="title" value="" class="full-width" placeholder="optional">
-    <div class="inline" style="margin-top:8px">
+    <div class="inline">
       <div>
         <label>Farbe</label>
         <div class="color-row">
