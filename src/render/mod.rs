@@ -64,8 +64,8 @@ fn title_svg(opts: &TitleOpts) -> String {
         _ => 4 + opts.size as i32, // top
     };
 
-    let y1 = base_y - 6;
-    let y2 = base_y + opts.size as i32 - 8;
+    let y1 = base_y - 14;
+    let y2 = base_y + opts.size as i32 - 16;
 
     let line1_el = format!(
         r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
