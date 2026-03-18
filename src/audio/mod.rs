@@ -44,12 +44,13 @@ pub async fn set_volume(device_id: &str, volume: f32) {
 /// Adjust volume relatively (e.g. "5%+" or "5%-").
 pub async fn adjust_volume(device_id: &str, delta: &str) {
     let (current, _) = get_volume(device_id).await;
-    let change = delta.trim_matches(|c: char| c.is_alphabetic()).parse::<f32>().unwrap_or(0.0) / 100.0;
-    let is_increase = delta.contains('+');
+    let percent_str = delta.trim_end_matches(|c: char| c == '+' || c == '-');
+    let percent = percent_str.trim_end_matches('%').parse::<f32>().unwrap_or(0.0) / 100.0;
+    let is_increase = delta.ends_with('+');
     let new_volume = if is_increase {
-        current + change
+        current + percent
     } else {
-        current - change
+        current - percent
     };
     set_volume(device_id, new_volume).await;
 }
