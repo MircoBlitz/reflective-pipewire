@@ -45,7 +45,7 @@ pub struct VolumeKnobAction;
 
 #[async_trait]
 impl Action for VolumeKnobAction {
-    const UUID: ActionUuid = "com.mircoblitz.reflective-pipewire.volume-knob";
+    const UUID: ActionUuid = "de.mircoblitz.reflective-pipewire.volume-knob";
     type Settings = VolumeKnobSettings;
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {

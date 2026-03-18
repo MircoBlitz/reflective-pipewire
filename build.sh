@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PLUGIN_DIR="dist/com.mircoblitz.reflective-pipewire.sdPlugin"
+PLUGIN_DIR="dist/de.mircoblitz.reflective-pipewire.sdPlugin"
 
 cargo build --release
 
@@ -14,4 +14,4 @@ cp -r assets/icons "$PLUGIN_DIR/"
 cp -r propertyInspector "$PLUGIN_DIR/"
 
 cd dist
-zip -r reflective-pipewire.zip com.mircoblitz.reflective-pipewire.sdPlugin/
+zip -r reflective-pipewire.zip de.mircoblitz.reflective-pipewire.sdPlugin/

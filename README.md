@@ -19,7 +19,7 @@ A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amanspr
 
 ## Installation
 
-1. Download the latest `com.mircoblitz.reflective-pipewire.zip` from [Releases](https://github.com/MircoBlitz/reflective-pipewire/releases)
+1. Download the latest `de.mircoblitz.reflective-pipewire.zip` from [Releases](https://github.com/MircoBlitz/reflective-pipewire/releases)
 2. In OpenDeck, go to **Plugins → Install from file**
 3. Select the downloaded `.zip` file
 4. The plugin appears under **RefPipe Audio** in the action sidebar
@@ -79,11 +79,11 @@ cargo build --release
 To package as an installable plugin:
 
 ```bash
-mkdir -p dist/com.mircoblitz.reflective-pipewire.sdPlugin/x86_64-unknown-linux-gnu
-cp target/release/reflective-pipewire dist/com.mircoblitz.reflective-pipewire.sdPlugin/x86_64-unknown-linux-gnu/
-cp manifest.json dist/com.mircoblitz.reflective-pipewire.sdPlugin/
-cp -r propertyInspector icons dist/com.mircoblitz.reflective-pipewire.sdPlugin/
-cd dist && zip -r com.mircoblitz.reflective-pipewire.zip com.mircoblitz.reflective-pipewire.sdPlugin
+mkdir -p dist/de.mircoblitz.reflective-pipewire.sdPlugin/x86_64-unknown-linux-gnu
+cp target/release/reflective-pipewire dist/de.mircoblitz.reflective-pipewire.sdPlugin/x86_64-unknown-linux-gnu/
+cp manifest.json dist/de.mircoblitz.reflective-pipewire.sdPlugin/
+cp -r propertyInspector icons dist/de.mircoblitz.reflective-pipewire.sdPlugin/
+cd dist && zip -r de.mircoblitz.reflective-pipewire.zip de.mircoblitz.reflective-pipewire.sdPlugin
 ```
 
 Then install the `.zip` via OpenDeck.

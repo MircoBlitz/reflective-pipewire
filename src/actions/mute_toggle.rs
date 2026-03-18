@@ -41,7 +41,7 @@ pub struct MuteToggleAction;
 
 #[async_trait]
 impl Action for MuteToggleAction {
-    const UUID: ActionUuid = "com.mircoblitz.reflective-pipewire.mute-toggle";
+    const UUID: ActionUuid = "de.mircoblitz.reflective-pipewire.mute-toggle";
     type Settings = MuteToggleSettings;
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {

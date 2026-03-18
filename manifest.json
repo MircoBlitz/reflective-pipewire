@@ -18,7 +18,7 @@
   "Actions": [
     {
       "Name": "Mute Toggle",
-      "UUID": "com.mircoblitz.reflective-pipewire.mute-toggle",
+      "UUID": "de.mircoblitz.reflective-pipewire.mute-toggle",
       "Icon": "icons/mic_off",
       "Tooltip": "Toggle mute on any source/sink. State syncs across all buttons in real-time.",
       "Controllers": ["Keypad"],
@@ -31,7 +31,7 @@
     },
     {
       "Name": "Volume Knob",
-      "UUID": "com.mircoblitz.reflective-pipewire.volume-knob",
+      "UUID": "de.mircoblitz.reflective-pipewire.volume-knob",
       "Icon": "icons/volume_knob",
       "Tooltip": "Encoder: rotate to change volume, press to toggle mute.",
       "Controllers": ["Encoder"],
@@ -43,7 +43,7 @@
     },
     {
       "Name": "Volume Display",
-      "UUID": "com.mircoblitz.reflective-pipewire.volume-display",
+      "UUID": "de.mircoblitz.reflective-pipewire.volume-display",
       "Icon": "icons/volume_display",
       "Tooltip": "Read-only volume bar that syncs with the system in real-time.",
       "Controllers": ["Keypad"],
@@ -55,7 +55,7 @@
     },
     {
       "Name": "Volume Button",
-      "UUID": "com.mircoblitz.reflective-pipewire.volume-button",
+      "UUID": "de.mircoblitz.reflective-pipewire.volume-button",
       "Icon": "icons/volume_button",
       "Tooltip": "Press to adjust volume: step up, step down, or set a fixed level.",
       "Controllers": ["Keypad"],

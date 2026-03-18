@@ -43,7 +43,7 @@ pub struct VolumeDisplayAction;
 
 #[async_trait]
 impl Action for VolumeDisplayAction {
-    const UUID: ActionUuid = "com.mircoblitz.reflective-pipewire.volume-display";
+    const UUID: ActionUuid = "de.mircoblitz.reflective-pipewire.volume-display";
     type Settings = VolumeDisplaySettings;
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {

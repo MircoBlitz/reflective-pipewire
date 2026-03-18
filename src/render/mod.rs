@@ -1,7 +1,5 @@
 pub mod icons;
 
-use icons::IconData;
-
 /// Parse a hex color string to (r, g, b).
 fn parse_hex(hex: &str) -> (u8, u8, u8) {
     let hex = hex.trim_start_matches('#');
@@ -22,48 +20,38 @@ pub fn lerp_color(from: &str, to: &str, t: f32) -> String {
     format!("#{:02x}{:02x}{:02x}", r, g, b)
 }
 
-/// Render an FA icon as a nested SVG that fits within given bounds.
-fn icon_svg(icon: IconData, color: &str, x: u32, y: u32, w: u32, h: u32, opacity: &str) -> String {
-    let (vw, vh, path) = icon;
-    format!(
-        r#"<svg x="{x}" y="{y}" width="{w}" height="{h}" viewBox="0 0 {vw} {vh}" opacity="{opacity}"><path fill="{color}" d="{path}"/></svg>"#,
-        x = x, y = y, w = w, h = h, vw = vw, vh = vh, opacity = opacity, color = color, path = path,
-    )
+/// Apply custom colors to an icon SVG.
+/// Replaces the default background (#0a0a0a) and icon fill (#ffffff).
+fn apply_colors(svg: &str, bg_color: &str, icon_color: &str) -> String {
+    svg.replace("#0a0a0a", bg_color)
+       .replace("#ffffff", icon_color)
+}
+
+/// Strip the closing </svg> tag so overlay elements can be appended.
+fn svg_strip_close(svg: &str) -> &str {
+    svg.trim_end().trim_end_matches("</svg>")
 }
 
 /// Render optional title text at the top of the button.
-fn title_svg(title: &str, color: &str) -> (String, u32) {
-    let font = "sans-serif";
+fn title_svg(title: &str, color: &str) -> String {
     if title.is_empty() {
-        (String::new(), 0)
+        String::new()
     } else {
-        let svg = format!(
-            r#"<text x="72" y="18" text-anchor="middle" font-family="{font}" font-size="14" font-weight="bold" fill="{color}">{title}</text>"#,
-            font = font, color = color, title = title,
-        );
-        (svg, 20)
+        format!(
+            r#"<text x="72" y="18" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="{color}">{title}</text>"#,
+            color = color, title = title,
+        )
     }
 }
 
 /// Render a mute toggle button as SVG.
 pub fn mute_button(bg_color: &str, icon_color: &str, icon: &str, muted: bool, title: &str) -> String {
-    let icon_data = icons::get(icon, !muted);
-    let (title_el, t_off) = title_svg(title, icon_color);
+    let svg = icons::get(icon, !muted);
+    let colored = apply_colors(svg, bg_color, icon_color);
+    let base = svg_strip_close(&colored);
+    let title_el = title_svg(title, icon_color);
 
-    // Icon fills most of the button, with padding
-    let pad = 16;
-    let icon_y = pad + t_off;
-    let icon_h = 144 - icon_y - pad;
-    let icon_el = icon_svg(icon_data, icon_color, pad, icon_y, 144 - pad * 2, icon_h, "1.0");
-
-    format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
-  <rect width="144" height="144" rx="16" fill="{bg}"/>
-  {title_el}
-  {icon_el}
-</svg>"#,
-        bg = bg_color, title_el = title_el, icon_el = icon_el,
-    )
+    format!("{base}\n  {title_el}\n</svg>", base = base, title_el = title_el)
 }
 
 /// Render a volume bar button as SVG.
@@ -76,37 +64,28 @@ pub fn volume_bar(
     muted: bool,
     title: &str,
 ) -> String {
-    let icon_data = icons::get(icon, !muted);
+    let svg = icons::get(icon, !muted);
+    let colored = apply_colors(svg, bg_color, icon_color);
+    let base = svg_strip_close(&colored);
+
     let bar_width = (volume.clamp(0.0, 1.0) * 120.0) as u32;
     let bar_opacity = if muted { "0.3" } else { "1.0" };
     let icon_opacity = if muted { "0.5" } else { "1.0" };
     let pct = (volume * 100.0).round() as u32;
-    let track_fill = "#ffffff20";
-    let font = "sans-serif";
-    let (title_el, t_off) = title_svg(title, icon_color);
-
-    // Icon: large, takes most of the space above bar
-    let icon_y = 6 + t_off;
-    let icon_h = 94 - t_off;
-    let icon_el = icon_svg(icon_data, icon_color, 22, icon_y, 100, icon_h, icon_opacity);
+    let title_el = title_svg(title, icon_color);
 
     format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
-  <rect width="144" height="144" rx="16" fill="{bg}"/>
+        r#"{base}
   {title_el}
-  {icon_el}
-  <text x="72" y="112" text-anchor="middle" font-family="{font}" font-size="18" font-weight="bold" fill="{ic}" opacity="{icon_opacity}">{pct}%</text>
-  <rect x="12" y="120" width="120" height="12" rx="6" fill="{track_fill}"/>
+  <text x="72" y="112" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="{ic}" opacity="{icon_opacity}">{pct}%</text>
+  <rect x="12" y="120" width="120" height="12" rx="6" fill="{ic}" opacity="0.12"/>
   <rect x="12" y="120" width="{bar_w}" height="12" rx="6" fill="{bar_c}" opacity="{bar_opacity}"/>
 </svg>"#,
-        bg = bg_color,
+        base = base,
         title_el = title_el,
-        icon_el = icon_el,
         ic = icon_color,
         icon_opacity = icon_opacity,
-        font = font,
         pct = pct,
-        track_fill = track_fill,
         bar_w = bar_width,
         bar_c = bar_color,
         bar_opacity = bar_opacity,
@@ -115,22 +94,17 @@ pub fn volume_bar(
 
 /// Render a volume button (up/down/set) as SVG.
 pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, title: &str) -> String {
-    let icon_data = icons::get(icon, true);
-    let font = "sans-serif";
-    let (title_el, t_off) = title_svg(title, icon_color);
-
-    let icon_y = 8 + t_off;
-    let icon_h = 84 - t_off;
-    let icon_el = icon_svg(icon_data, icon_color, 32, icon_y, 80, icon_h, "1.0");
+    let svg = icons::get(icon, true);
+    let colored = apply_colors(svg, bg_color, icon_color);
+    let base = svg_strip_close(&colored);
+    let title_el = title_svg(title, icon_color);
 
     format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
-  <rect width="144" height="144" rx="16" fill="{bg}"/>
+        r#"{base}
   {title_el}
-  {icon_el}
-  <text x="72" y="126" text-anchor="middle" font-family="{font}" font-size="20" font-weight="bold" fill="{ic}">{label}</text>
+  <text x="72" y="126" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="{ic}">{label}</text>
 </svg>"#,
-        bg = bg_color, title_el = title_el, icon_el = icon_el, ic = icon_color, font = font, label = label,
+        base = base, title_el = title_el, ic = icon_color, label = label,
     )
 }
 
