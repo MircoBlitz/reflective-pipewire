@@ -42,5 +42,17 @@ pub async fn init() -> OpenActionResult<()> {
         }
     });
 
+    // Keep-alive: re-render all instances every 2 seconds to prevent OpenDeck UI resets
+    tokio::spawn(async {
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+            mute_toggle::sync_all_instances().await;
+            volume_knob::sync_all_instances().await;
+            volume_display::sync_all_instances().await;
+            volume_up::sync_all_instances().await;
+            volume_down::sync_all_instances().await;
+        }
+    });
+
     run(std::env::args().collect()).await
 }

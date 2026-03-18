@@ -67,11 +67,13 @@ impl Action for MuteToggleAction {
     }
 
     async fn will_disappear(&self, instance: &Instance, _settings: &Self::Settings) -> OpenActionResult<()> {
+        log::info!("MuteToggle will_disappear: {}", instance.instance_id);
         SETTINGS.remove(&instance.instance_id);
         Ok(())
     }
 
     async fn did_receive_settings(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
+        log::info!("MuteToggle did_receive_settings: {}", instance.instance_id);
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         let (vol, muted) = audio::get_volume(&settings.device_id).await;
         render_button(instance, vol, muted, settings).await?;
@@ -79,7 +81,8 @@ impl Action for MuteToggleAction {
         Ok(())
     }
 
-    async fn key_up(&self, _instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
+    async fn key_up(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
+        log::info!("MuteToggle key_up: {}", instance.instance_id);
         audio::toggle_mute(&settings.device_id).await;
         super::sync_all_for_device(&settings.device_id).await;
         Ok(())
