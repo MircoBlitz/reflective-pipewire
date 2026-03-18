@@ -56,6 +56,7 @@ impl Action for VolumeDownAction {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         render_button(instance, settings).await?;
         super::send_device_list(instance).await;
+        sync_all_instances().await;
         Ok(())
     }
 
