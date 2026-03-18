@@ -118,7 +118,7 @@ async fn render_knob(instance: &Instance, s: &VolumeKnobSettings) -> OpenActionR
         (s.bg_color.clone(), s.icon_color.clone())
     };
     let show_pct = s.display_mode == "percent";
-    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
+    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position, 2, 16);
     let svg = render::volume_knob(&bg, &ic, &s.icon, volume, muted, &title, show_pct);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

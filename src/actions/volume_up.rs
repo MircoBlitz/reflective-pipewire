@@ -118,7 +118,7 @@ async fn render_button(instance: &Instance, s: &VolumeUpSettings) -> OpenActionR
         (s.title.clone(), s.title_position.as_str())
     };
 
-    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position);
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position, 2, 16);
     let svg = render::volume_button(&bg, &ic, &s.icon, &label, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

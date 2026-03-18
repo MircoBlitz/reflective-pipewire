@@ -9,8 +9,8 @@ use crate::render::TitleOpts;
 use openaction::Instance;
 
 /// Build TitleOpts from common settings fields.
-pub fn title_opts<'a>(title: &'a str, color: &'a str, size: u32, position: &'a str) -> TitleOpts<'a> {
-    TitleOpts { text: title, color, size, position }
+pub fn title_opts<'a>(title: &'a str, color: &'a str, size: u32, position: &'a str, max_lines: u32, max_chars: u32) -> TitleOpts<'a> {
+    TitleOpts { text: title, color, size, position, max_lines, max_chars }
 }
 
 /// Sync all action types that are watching a specific device.

@@ -131,7 +131,7 @@ async fn render_button(instance: &Instance, volume: f32, muted: bool, s: &MuteTo
         (s.title.clone(), s.title_position.as_str())
     };
 
-    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position);
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position, 2, 16);
     let svg = render::mute_button(&bg, &ic, &s.icon, muted, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

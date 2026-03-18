@@ -12,15 +12,17 @@ use crate::render;
 pub struct VolumeDisplaySettings {
     pub device_id: String,
     pub icon: String,
-    pub title: String,
-    pub title_color: String,
-    pub title_size: u32,
-    pub title_position: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
     pub icon_muted_color: String,
     pub react_to_state: bool,
+    pub title: String,
+    pub title_enabled: bool,
+    pub title_color: String,
+    pub title_size: u32,
+    pub title_max_lines: u32,
+    pub title_max_chars: u32,
 }
 
 impl Default for VolumeDisplaySettings {
@@ -28,15 +30,17 @@ impl Default for VolumeDisplaySettings {
         Self {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
-            title: String::new(),
-            title_color: "#ffffff".to_string(),
-            title_size: 14,
-            title_position: "top".to_string(),
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
             react_to_state: true,
+            title: String::new(),
+            title_enabled: true,
+            title_color: "#ffffff".to_string(),
+            title_size: 14,
+            title_max_lines: 2,
+            title_max_chars: 16,
         }
     }
 }
@@ -92,14 +96,6 @@ pub async fn sync_for_device(device_id: &str) {
     }
 }
 
-fn device_label(device_id: &str) -> &str {
-    match device_id {
-        "@DEFAULT_AUDIO_SOURCE@" => "Default Source",
-        "@DEFAULT_AUDIO_SINK@" => "Default Sink",
-        other => other,
-    }
-}
-
 async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenActionResult<()> {
     let (volume, muted) = audio::get_volume(&s.device_id).await;
     let (bg, ic) = if s.react_to_state {
@@ -111,8 +107,14 @@ async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenA
     } else {
         (s.bg_color.clone(), s.icon_color.clone())
     };
-    let name = device_label(&s.device_id);
-    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
-    let svg = render::volume_display(&bg, &ic, volume, muted, name, &title);
+    let display_title = if !s.title_enabled {
+        String::new()
+    } else if s.title.is_empty() {
+        audio::devices::get_device_name(&s.device_id).await
+    } else {
+        s.title.clone()
+    };
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, "middle", s.title_max_lines, s.title_max_chars);
+    let svg = render::volume_display(&bg, &ic, volume, muted, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }
