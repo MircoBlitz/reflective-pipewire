@@ -34,39 +34,23 @@ pub async fn init() -> OpenActionResult<()> {
     register_action(VolumeUpAction).await;
     register_action(VolumeDownAction).await;
 
-    // Start PipeWire event monitor — syncs all action instances on audio changes
+    // Start PipeWire event monitor — syncs only mute_toggle to reduce CPU
     let mut rx = monitor::start_monitor().subscribe();
     tokio::spawn(async move {
         loop {
             match rx.recv().await {
                 Ok(_event) => {
                     mute_toggle::sync_all_instances().await;
-                    volume_knob::sync_all_instances().await;
-                    volume_display::sync_all_instances().await;
-                    volume_up::sync_all_instances().await;
-                    volume_down::sync_all_instances().await;
                 }
                 Err(tokio::sync::broadcast::error::RecvError::Lagged(n)) => {
-                    log::warn!("Monitor lagged {n} events, syncing now");
+                    log::warn!("Monitor lagged {n} events, syncing mute_toggle");
                     mute_toggle::sync_all_instances().await;
-                    volume_knob::sync_all_instances().await;
-                    volume_display::sync_all_instances().await;
-                    volume_up::sync_all_instances().await;
-                    volume_down::sync_all_instances().await;
                 }
                 Err(tokio::sync::broadcast::error::RecvError::Closed) => {
                     log::error!("Monitor channel closed");
                     break;
                 }
             }
-        }
-    });
-
-    // Light-weight keep-alive: only sync mute_toggle every 500ms to prevent UI resets
-    tokio::spawn(async {
-        loop {
-            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
-            mute_toggle::sync_all_instances().await;
         }
     });
 
