@@ -1,4 +1,4 @@
-use openaction::{register_action, run, OpenActionResult};
+use openaction::{register_action, run, OpenActionResult, async_trait, global_events::{GlobalEventHandler, DeviceDidConnectEvent, set_global_event_handler}};
 
 use crate::actions::mute_toggle::{self, MuteToggleAction};
 use crate::actions::volume_display::{self, VolumeDisplayAction};
@@ -7,7 +7,27 @@ use crate::actions::volume_knob::{self, VolumeKnobAction};
 use crate::actions::volume_up::{self, VolumeUpAction};
 use crate::audio::monitor;
 
+struct GlobalHandler;
+
+#[async_trait]
+impl GlobalEventHandler for GlobalHandler {
+    async fn device_did_connect(&self, _event: DeviceDidConnectEvent) -> OpenActionResult<()> {
+        log::info!("Device connected/layout changed – syncing all instances");
+        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+        mute_toggle::sync_all_instances().await;
+        volume_knob::sync_all_instances().await;
+        volume_display::sync_all_instances().await;
+        volume_up::sync_all_instances().await;
+        volume_down::sync_all_instances().await;
+        Ok(())
+    }
+}
+
+static HANDLER: GlobalHandler = GlobalHandler;
+
 pub async fn init() -> OpenActionResult<()> {
+    set_global_event_handler(&HANDLER);
+
     register_action(MuteToggleAction).await;
     register_action(VolumeKnobAction).await;
     register_action(VolumeDisplayAction).await;
@@ -42,17 +62,6 @@ pub async fn init() -> OpenActionResult<()> {
         }
     });
 
-    // Keep-alive: re-render all instances every 2 seconds to prevent OpenDeck UI resets
-    tokio::spawn(async {
-        loop {
-            tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
-            mute_toggle::sync_all_instances().await;
-            volume_knob::sync_all_instances().await;
-            volume_display::sync_all_instances().await;
-            volume_up::sync_all_instances().await;
-            volume_down::sync_all_instances().await;
-        }
-    });
 
     run(std::env::args().collect()).await
 }
