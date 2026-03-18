@@ -25,6 +25,14 @@ pub async fn sync_all_for_device(device_id: &str) {
 
 /// Sync ALL action instances (all types) - called when layout changes
 pub async fn sync_all_instances() {
+    // Fetch all visible instances across all action types to force refresh
+    let _ = openaction::visible_instances("de.mircoblitz.reflective-pipewire.mute-toggle").await;
+    let _ = openaction::visible_instances("de.mircoblitz.reflective-pipewire.volume-knob").await;
+    let _ = openaction::visible_instances("de.mircoblitz.reflective-pipewire.volume-display").await;
+    let _ = openaction::visible_instances("de.mircoblitz.reflective-pipewire.volume-up").await;
+    let _ = openaction::visible_instances("de.mircoblitz.reflective-pipewire.volume-down").await;
+
+    // Then sync each action type
     mute_toggle::sync_all_instances().await;
     volume_knob::sync_all_instances().await;
     volume_display::sync_all_instances().await;
