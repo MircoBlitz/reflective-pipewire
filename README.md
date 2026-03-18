@@ -1,6 +1,6 @@
 # Reflective PipeWire
 
-A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amansprojects/opendeck) (Stream Deck on Linux). All buttons sync their state in real-time — mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
+A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amansprojects/opendeck) (Stream Deck on Linux). All buttons sync their state in real-time. Mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
 
 ## Features
 
