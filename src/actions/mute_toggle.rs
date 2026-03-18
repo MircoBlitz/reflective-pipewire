@@ -53,13 +53,15 @@ impl Action for MuteToggleAction {
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         log::info!("MuteToggle will_appear: {}", instance.instance_id);
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
+
+        // Render this button
         let (vol, muted) = audio::get_volume(&settings.device_id).await;
         render_button(instance, vol, muted, settings).await?;
         super::send_device_list(instance).await;
 
-        // Delay to allow all will_appear calls to complete before syncing
+        // Also re-render all other mute_toggle instances to prevent UI reset
         tokio::spawn(async {
-            tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
+            tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
             sync_all_instances().await;
         });
 
@@ -91,10 +93,12 @@ impl Action for MuteToggleAction {
 
 pub async fn sync_all_instances() {
     let instances = visible_instances(MuteToggleAction::UUID).await;
-    log::info!("MuteToggle: syncing {} instances", instances.len());
+    log::warn!("MuteToggle: syncing {} visible instances, {} in SETTINGS", instances.len(), SETTINGS.len());
     for inst in instances {
         let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
-        log::debug!("  - rendering {} with device {}", inst.instance_id, s.device_id);
+        let found = SETTINGS.contains_key(&inst.instance_id);
+        log::warn!("  - {} (found in SETTINGS: {}, device: {}, color: {})",
+            inst.instance_id, found, s.device_id, s.icon_color);
         let (vol, muted) = audio::get_volume(&s.device_id).await;
         let _ = render_button(&inst, vol, muted, &s).await;
     }
