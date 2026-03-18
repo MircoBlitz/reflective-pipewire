@@ -6,14 +6,15 @@
   <link rel="stylesheet" href="shared.css">
 </head>
 <body>
+  <div class="device-row">
+    <label>Device</label>
+    <select id="device_id">
+      <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
+      <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
+    </select>
+  </div>
+
   <div class="cols">
-    <div>
-      <label>Device</label>
-      <select id="device_id" size="2">
-        <option value="@DEFAULT_AUDIO_SOURCE@">Default Source (Mic)</option>
-        <option value="@DEFAULT_AUDIO_SINK@">Default Sink (Speaker)</option>
-      </select>
-    </div>
     <div>
       <label>Icon</label>
       <select id="icon">

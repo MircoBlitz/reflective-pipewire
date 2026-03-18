@@ -106,6 +106,14 @@ select option {
 }
 .full-width { width: 100%; }
 
+/* Device selector - larger for two-line display */
+.device-row {
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* Checkbox */
 .checkbox-row {
   display: flex;
