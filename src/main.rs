@@ -7,11 +7,15 @@ mod render;
 
 #[tokio::main]
 async fn main() -> OpenActionResult<()> {
-    simplelog::TermLogger::init(
+    let log_file = std::fs::File::create(format!(
+        "/tmp/reflective-pipewire-{}.log",
+        std::process::id()
+    )).unwrap();
+
+    simplelog::WriteLogger::init(
         simplelog::LevelFilter::Debug,
         simplelog::Config::default(),
-        simplelog::TerminalMode::Stdout,
-        simplelog::ColorChoice::Never,
+        log_file,
     )
     .unwrap();
 

@@ -51,6 +51,7 @@ impl Action for MuteToggleAction {
     type Settings = MuteToggleSettings;
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
+        log::info!("MuteToggle will_appear: {}", instance.instance_id);
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         let (vol, muted) = audio::get_volume(&settings.device_id).await;
         render_button(instance, vol, muted, settings).await?;
@@ -86,8 +87,11 @@ impl Action for MuteToggleAction {
 }
 
 pub async fn sync_all_instances() {
-    for inst in visible_instances(MuteToggleAction::UUID).await {
+    let instances = visible_instances(MuteToggleAction::UUID).await;
+    log::info!("MuteToggle: syncing {} instances", instances.len());
+    for inst in instances {
         let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
+        log::debug!("  - rendering {} with device {}", inst.instance_id, s.device_id);
         let (vol, muted) = audio::get_volume(&s.device_id).await;
         let _ = render_button(&inst, vol, muted, &s).await;
     }
