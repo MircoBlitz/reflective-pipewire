@@ -62,6 +62,14 @@ pub async fn init() -> OpenActionResult<()> {
         }
     });
 
+    // Light-weight keep-alive: only sync mute_toggle every 500ms to prevent UI resets
+    tokio::spawn(async {
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+            mute_toggle::sync_all_instances().await;
+        }
+    });
+
 
     run(std::env::args().collect()).await
 }
