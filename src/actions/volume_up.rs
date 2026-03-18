@@ -111,7 +111,14 @@ async fn render_button(instance: &Instance, s: &VolumeUpSettings) -> OpenActionR
     } else {
         (s.bg_color.clone(), s.icon_color.clone())
     };
-    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
+
+    let (display_title, title_position) = if s.auto_device_title {
+        (audio::devices::get_device_name(&s.device_id).await, "bottom")
+    } else {
+        (s.title.clone(), s.title_position.as_str())
+    };
+
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position);
     let svg = render::volume_button(&bg, &ic, &s.icon, &label, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }
