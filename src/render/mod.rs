@@ -114,13 +114,14 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
     let colored = apply_colors(svg, bg_color, icon_color);
     let base = svg_strip_close(&colored);
     let title_el = title_svg(title);
+    let white = "#ffffff";
 
     format!(
         r#"{base}
   {title_el}
-  <text x="72" y="126" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="{ic}">{label}</text>
+  <text x="72" y="110" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="bold" fill="{w}">{label}</text>
 </svg>"#,
-        base = base, title_el = title_el, ic = icon_color, label = label,
+        base = base, title_el = title_el, w = white, label = label,
     )
 }
 
