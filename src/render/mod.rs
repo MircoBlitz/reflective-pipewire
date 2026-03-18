@@ -32,72 +32,88 @@ fn svg_strip_close(svg: &str) -> &str {
     svg.trim_end().trim_end_matches("</svg>")
 }
 
-/// Render optional title text at the top of the button.
-fn title_svg(title: &str, color: &str) -> String {
-    if title.is_empty() {
-        String::new()
-    } else {
-        format!(
-            r#"<text x="72" y="18" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="{color}">{title}</text>"#,
-            color = color, title = title,
-        )
+/// Title rendering options.
+pub struct TitleOpts<'a> {
+    pub text: &'a str,
+    pub color: &'a str,
+    pub size: u32,
+    pub position: &'a str, // "top", "middle", "bottom"
+}
+
+/// Render optional title text.
+fn title_svg(opts: &TitleOpts) -> String {
+    if opts.text.is_empty() {
+        return String::new();
     }
+    let y = match opts.position {
+        "middle" => 72 + opts.size as i32 / 3,
+        "bottom" => 140,
+        _ => 4 + opts.size as i32, // top
+    };
+    format!(
+        r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
+        y = y, sz = opts.size, c = opts.color, t = opts.text,
+    )
 }
 
 /// Render a mute toggle button as SVG.
-pub fn mute_button(bg_color: &str, icon_color: &str, icon: &str, muted: bool, title: &str) -> String {
+pub fn mute_button(bg_color: &str, icon_color: &str, icon: &str, muted: bool, title: &TitleOpts) -> String {
     let svg = icons::get(icon, !muted);
     let colored = apply_colors(svg, bg_color, icon_color);
     let base = svg_strip_close(&colored);
-    let title_el = title_svg(title, icon_color);
+    let title_el = title_svg(title);
 
     format!("{base}\n  {title_el}\n</svg>", base = base, title_el = title_el)
 }
 
-/// Render a volume bar button as SVG.
-pub fn volume_bar(
+/// Render a volume knob as SVG. show_percent=true shows %, false shows bar.
+pub fn volume_knob(
     bg_color: &str,
     icon_color: &str,
-    bar_color: &str,
     icon: &str,
     volume: f32,
     muted: bool,
-    title: &str,
+    title: &TitleOpts,
+    show_percent: bool,
 ) -> String {
     let svg = icons::get(icon, !muted);
     let colored = apply_colors(svg, bg_color, icon_color);
     let base = svg_strip_close(&colored);
 
-    let bar_width = (volume.clamp(0.0, 1.0) * 120.0) as u32;
     let bar_opacity = if muted { "0.3" } else { "1.0" };
     let icon_opacity = if muted { "0.5" } else { "1.0" };
     let pct = (volume * 100.0).round() as u32;
-    let title_el = title_svg(title, icon_color);
+    let title_el = title_svg(title);
+
+    let indicator = if show_percent {
+        format!(
+            r#"<text x="72" y="126" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="{ic}" opacity="{io}">{pct}%</text>"#,
+            ic = icon_color, io = icon_opacity, pct = pct,
+        )
+    } else {
+        let bar_width = (volume.clamp(0.0, 1.0) * 120.0) as u32;
+        format!(
+            r#"<rect x="12" y="120" width="120" height="12" rx="6" fill="{ic}" opacity="0.12"/>
+  <rect x="12" y="120" width="{bw}" height="12" rx="6" fill="{bc}" opacity="{bo}"/>"#,
+            ic = icon_color, bw = bar_width, bc = icon_color, bo = bar_opacity,
+        )
+    };
 
     format!(
         r#"{base}
   {title_el}
-  <text x="72" y="112" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="{ic}" opacity="{icon_opacity}">{pct}%</text>
-  <rect x="12" y="120" width="120" height="12" rx="6" fill="{ic}" opacity="0.12"/>
-  <rect x="12" y="120" width="{bar_w}" height="12" rx="6" fill="{bar_c}" opacity="{bar_opacity}"/>
+  {indicator}
 </svg>"#,
-        base = base,
-        title_el = title_el,
-        ic = icon_color,
-        icon_opacity = icon_opacity,
-        pct = pct,
-        bar_w = bar_width,
-        bar_c = bar_color,
-        bar_opacity = bar_opacity,
+        base = base, title_el = title_el, indicator = indicator,
     )
 }
 
 /// Render a volume button (up/down/set) as SVG.
-pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, title: &str) -> String {
+pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, title: &TitleOpts) -> String {
     let svg = icons::get(icon, true);
     let colored = apply_colors(svg, bg_color, icon_color);
     let base = svg_strip_close(&colored);
-    let title_el = title_svg(title, icon_color);
+    let title_el = title_svg(title);
 
     format!(
         r#"{base}
@@ -105,6 +121,87 @@ pub fn volume_button(bg_color: &str, icon_color: &str, icon: &str, label: &str, 
   <text x="72" y="126" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="{ic}">{label}</text>
 </svg>"#,
         base = base, title_el = title_el, ic = icon_color, label = label,
+    )
+}
+
+/// Build device name element, centered. Auto-wraps to 2 lines and shrinks font if needed.
+fn device_name_svg(name: &str, color: &str) -> String {
+    let max_w: f32 = 128.0;
+    let base_size: f32 = 18.0;
+    let char_w_ratio: f32 = 0.55; // avg char width / font size
+
+    let text_w = name.len() as f32 * base_size * char_w_ratio;
+
+    if text_w <= max_w {
+        // Single line, fits at base size
+        return format!(
+            r#"<text x="72" y="100" text-anchor="middle" font-family="sans-serif" font-size="18" fill="{c}" opacity="0.7">{n}</text>"#,
+            c = color, n = name,
+        );
+    }
+
+    // Try to split into 2 lines at a space near the middle
+    let mid = name.len() / 2;
+    let split = name[..mid].rfind(' ')
+        .or_else(|| name[mid..].find(' ').map(|i| i + mid));
+
+    if let Some(pos) = split {
+        let line1 = &name[..pos];
+        let line2 = &name[pos + 1..];
+        let longest = line1.len().max(line2.len()) as f32;
+        // Shrink font to fit the longest line, min 10px
+        let size = (max_w / (longest * char_w_ratio)).min(base_size).max(10.0) as u32;
+        let y1 = 93;
+        let y2 = 93 + size + 2;
+        format!(
+            r#"<text x="72" y="{y1}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l1}</text>
+  <text x="72" y="{y2}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{l2}</text>"#,
+            y1 = y1, y2 = y2, sz = size, c = color, l1 = line1, l2 = line2,
+        )
+    } else {
+        // No space to split — shrink to fit single line
+        let size = (max_w / (name.len() as f32 * char_w_ratio)).max(10.0) as u32;
+        format!(
+            r#"<text x="72" y="100" text-anchor="middle" font-family="sans-serif" font-size="{sz}" fill="{c}" opacity="0.7">{n}</text>"#,
+            sz = size, c = color, n = name,
+        )
+    }
+}
+
+/// Render a volume display: large percentage + device name, no icon.
+pub fn volume_display(
+    bg_color: &str,
+    text_color: &str,
+    volume: f32,
+    muted: bool,
+    device_name: &str,
+    title: &TitleOpts,
+) -> String {
+    let pct = (volume * 100.0).round() as u32;
+    let bar_width = (volume.clamp(0.0, 1.0) * 120.0) as u32;
+    let bar_opacity = if muted { "0.3" } else { "1.0" };
+    let text_opacity = if muted { "0.4" } else { "1.0" };
+    let title_el = title_svg(title);
+    let name_el = device_name_svg(device_name, text_color);
+
+    format!(
+        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
+  <rect width="144" height="144" rx="16" fill="{bg}"/>
+  {title_el}
+  <text x="72" y="50" text-anchor="middle" font-family="sans-serif" font-size="48" font-weight="bold" fill="{tc}" opacity="{to}">{pct}%</text>
+  {name_el}
+  <rect x="12" y="120" width="120" height="12" rx="6" fill="{tc}" opacity="0.12"/>
+  <rect x="12" y="120" width="{bar_w}" height="12" rx="6" fill="{bar_c}" opacity="{bar_o}"/>
+</svg>"#,
+        bg = bg_color,
+        title_el = title_el,
+        tc = text_color,
+        to = text_opacity,
+        pct = pct,
+        name_el = name_el,
+        bar_w = bar_width,
+        bar_c = text_color,
+        bar_o = bar_opacity,
     )
 }
 

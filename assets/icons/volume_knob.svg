@@ -11,9 +11,9 @@
     <path d="M72,14 L62,28 Q62,30 64,30 L80,30 Q82,30 82,28 Z" fill="#0a0a0a"/>
   </g>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.15">
+  <g opacity="0.30">
     <circle cx="72" cy="134" r="32" fill="#ffffff"/>
     <circle cx="72" cy="134" r="20" fill="#0a0a0a"/>
     <circle cx="72" cy="134" r="5" fill="#ffffff"/>

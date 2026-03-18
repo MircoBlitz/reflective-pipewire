@@ -44,6 +44,10 @@ const connectElgatoStreamDeckSocket = (port, uuid, event, info) => {
         picker.addEventListener("input", () => { text.value = picker.value; save(); });
         text.addEventListener("change", () => { picker.value = text.value; save(); });
       }
+    } else if (field.type === "radio") {
+      for (const radio of document.querySelectorAll(`input[name="${key}"]`)) {
+        radio.addEventListener("change", save);
+      }
     } else if (field.type === "checkbox") {
       const el = document.getElementById(key);
       if (el) el.addEventListener("change", save);
@@ -65,6 +69,9 @@ function loadFields() {
       const text = document.getElementById(key);
       if (picker) picker.value = val;
       if (text) text.value = val;
+    } else if (field.type === "radio") {
+      const radio = document.querySelector(`input[name="${key}"][value="${val}"]`);
+      if (radio) radio.checked = true;
     } else if (field.type === "checkbox") {
       const el = document.getElementById(key);
       if (el) el.checked = !!val;
@@ -82,6 +89,9 @@ function save() {
       payload[key] = document.getElementById(key)?.value ?? field.default;
     } else if (field.type === "number") {
       payload[key] = parseInt(document.getElementById(key)?.value ?? field.default, 10);
+    } else if (field.type === "radio") {
+      const checked = document.querySelector(`input[name="${key}"]:checked`);
+      payload[key] = checked ? checked.value : field.default;
     } else if (field.type === "checkbox") {
       payload[key] = document.getElementById(key)?.checked ?? field.default;
     } else {

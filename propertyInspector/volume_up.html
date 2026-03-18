@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mute Toggle Settings</title>
+  <title>Volume Up Settings</title>
   <link rel="stylesheet" href="shared.css">
 </head>
 <body>
@@ -17,24 +17,18 @@
     <div>
       <label>Icon</label>
       <select id="icon">
-        <option value="mic">Mikrofon</option>
-        <option value="headset">Headset</option>
-        <option value="headphones">Kopfhörer</option>
-        <option value="stereo">Anlage</option>
-        <option value="jack">3.5mm Jack</option>
-        <option value="dac">Externes DAC</option>
-        <option value="apps">Anwendungen</option>
-        <option value="discord">Discord</option>
-        <option value="obs">OBS</option>
-        <option value="twitch">Twitch</option>
-        <option value="speaker">Lautsprecher</option>
-        <option value="mixer">Mixer</option>
+        <option value="volume_up">Volume Up</option>
+        <option value="chevron_up">Chevron ▲</option>
+        <option value="plus">+</option>
       </select>
     </div>
   </div>
 
+  <label>Step (%)</label>
+  <input type="number" id="step" value="5" min="1" max="100" style="width:80px">
+
   <div class="checkbox-row">
-    <input type="checkbox" id="react_to_state" checked>
+    <input type="checkbox" id="react_to_state">
     <label for="react_to_state">React to volume/state</label>
   </div>
 
@@ -107,8 +101,9 @@
   <script>
     window.piFields = {
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
-      icon:             { type: "select",   default: "mic" },
-      react_to_state:   { type: "checkbox", default: true },
+      icon:             { type: "select",   default: "volume_up" },
+      step:             { type: "number",   default: 5 },
+      react_to_state:   { type: "checkbox", default: false },
       title:            { type: "text",     default: "" },
       title_color:      { type: "color",    default: "#ffffff" },
       title_size:       { type: "number",   default: 14 },

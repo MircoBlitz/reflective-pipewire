@@ -1,7 +1,7 @@
 {
   "Name": "Reflective PipeWire",
   "Author": "MircoBlitz",
-  "Version": "0.2.0",
+  "Version": "0.2.7",
   "Description": "Reactive PipeWire Audio Suite for OpenDeck. Mute toggle, volume knobs, volume display, and volume buttons — all with real-time state sync.",
   "Icon": "icons/plugin",
   "Category": "RefPipe Audio",
@@ -19,14 +19,14 @@
     {
       "Name": "Mute Toggle",
       "UUID": "de.mircoblitz.reflective-pipewire.mute-toggle",
-      "Icon": "icons/mic_off",
+      "Icon": "icons/mic",
       "Tooltip": "Toggle mute on any source/sink. State syncs across all buttons in real-time.",
       "Controllers": ["Keypad"],
       "SupportedInMultiActions": true,
       "PropertyInspectorPath": "propertyInspector/mute_toggle.html",
       "States": [
-        { "Image": "icons/mic_off", "Name": "Unmuted" },
-        { "Image": "icons/mic_off", "Name": "Muted" }
+        { "Image": "icons/mic", "Name": "Unmuted" },
+        { "Image": "icons/mic_deactivated", "Name": "Muted" }
       ]
     },
     {
@@ -45,7 +45,7 @@
       "Name": "Volume Display",
       "UUID": "de.mircoblitz.reflective-pipewire.volume-display",
       "Icon": "icons/volume_display",
-      "Tooltip": "Read-only volume bar that syncs with the system in real-time.",
+      "Tooltip": "Read-only volume display that syncs with the system in real-time.",
       "Controllers": ["Keypad"],
       "SupportedInMultiActions": false,
       "PropertyInspectorPath": "propertyInspector/volume_display.html",
@@ -54,15 +54,27 @@
       ]
     },
     {
-      "Name": "Volume Button",
-      "UUID": "de.mircoblitz.reflective-pipewire.volume-button",
-      "Icon": "icons/volume_button",
-      "Tooltip": "Press to adjust volume: step up, step down, or set a fixed level.",
+      "Name": "Volume Up",
+      "UUID": "de.mircoblitz.reflective-pipewire.volume-up",
+      "Icon": "icons/volume_up",
+      "Tooltip": "Press to increase volume by a configurable step.",
       "Controllers": ["Keypad"],
       "SupportedInMultiActions": true,
-      "PropertyInspectorPath": "propertyInspector/volume_button.html",
+      "PropertyInspectorPath": "propertyInspector/volume_up.html",
       "States": [
-        { "Image": "icons/volume_button", "Name": "Default" }
+        { "Image": "icons/volume_up", "Name": "Default" }
+      ]
+    },
+    {
+      "Name": "Volume Down",
+      "UUID": "de.mircoblitz.reflective-pipewire.volume-down",
+      "Icon": "icons/volume_down",
+      "Tooltip": "Press to decrease volume by a configurable step.",
+      "Controllers": ["Keypad"],
+      "SupportedInMultiActions": true,
+      "PropertyInspectorPath": "propertyInspector/volume_down.html",
+      "States": [
+        { "Image": "icons/volume_down", "Name": "Default" }
       ]
     }
   ]

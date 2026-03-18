@@ -10,9 +10,9 @@
   <!-- Strike-through diagonal -->
   <line x1="40" y1="14" x2="104" y2="78" stroke="#ff4444" stroke-width="3.5" opacity="0.85" stroke-linecap="round"/>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.08">
+  <g opacity="0.23">
     <line x1="56" y1="102" x2="88" y2="102" stroke="#ffffff" stroke-width="3"/>
     <line x1="72" y1="102" x2="72" y2="116" stroke="#ffffff" stroke-width="3"/>
     <path d="M49 148 Q49 116 72 116 Q95 116 95 148" fill="none" stroke="#ffffff" stroke-width="3"/>

@@ -16,9 +16,9 @@
     <rect x="74" y="48" width="10" height="6" rx="2" fill="#ffffff"/>
   </g>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.15">
+  <g opacity="0.30">
     <rect x="22" y="108" width="100" height="56" rx="6" fill="none" stroke="#ffffff" stroke-width="3"/>
     <rect x="32" y="142" width="50" height="14" rx="2" fill="#ffffff"/>
     <circle cx="100" cy="149" r="8" fill="none" stroke="#ffffff" stroke-width="2.5"/>

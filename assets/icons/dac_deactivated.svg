@@ -11,9 +11,9 @@
   <!-- Strike-through diagonal -->
   <line x1="40" y1="14" x2="104" y2="78" stroke="#ff4444" stroke-width="3.5" opacity="0.85" stroke-linecap="round"/>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.08">
+  <g opacity="0.23">
     <rect x="24" y="114" width="96" height="40" rx="4" fill="none" stroke="#ffffff" stroke-width="3"/>
     <rect x="36" y="126" width="10" height="16" rx="2" fill="#ffffff"/>
     <circle cx="72" cy="134" r="3" fill="#ffffff"/>

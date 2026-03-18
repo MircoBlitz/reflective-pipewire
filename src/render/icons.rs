@@ -21,6 +21,12 @@ pub fn get_active(name: &str) -> IconData {
         "twitch" => icon!("twitch"),
         "speaker" => icon!("speaker"),
         "mixer" => icon!("mixer"),
+        "plus" => icon!("plus"),
+        "minus" => icon!("minus"),
+        "chevron_up" => icon!("chevron_up"),
+        "chevron_down" => icon!("chevron_down"),
+        "volume_up" => icon!("volume_up"),
+        "volume_down" => icon!("volume_down"),
         _ => icon!("mic"),
     }
 }

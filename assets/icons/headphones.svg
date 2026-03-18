@@ -7,9 +7,9 @@
     <rect x="92" y="49" width="16" height="28" rx="6" fill="#ffffff"/>
   </g>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.15">
+  <g opacity="0.30">
     <rect x="36" y="103" width="16" height="28" rx="6" fill="#ffffff"/>
     <rect x="92" y="103" width="16" height="28" rx="6" fill="#ffffff"/>
     <path d="M42 127 Q42 165 72 165 Q102 165 102 127" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>

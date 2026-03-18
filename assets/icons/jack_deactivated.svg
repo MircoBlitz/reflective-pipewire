@@ -12,9 +12,9 @@
   <!-- Strike-through diagonal -->
   <line x1="40" y1="14" x2="104" y2="78" stroke="#ff4444" stroke-width="3.5" opacity="0.85" stroke-linecap="round"/>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.08">
+  <g opacity="0.23">
     <path fill="#ffffff" d="
       M54 98 L90 98 L90 114 L54 114 Z
       M60 118 L84 118 L84 130 L60 130 Z

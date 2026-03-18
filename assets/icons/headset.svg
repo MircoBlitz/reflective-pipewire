@@ -9,9 +9,9 @@
     <circle cx="52" cy="76" r="4" fill="#ffffff"/>
   </g>
   <!-- Mirror line -->
-  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.15"/>
+  <line x1="20" y1="90" x2="124" y2="90" stroke="#ffffff" stroke-width="1" opacity="0.40"/>
   <!-- Reflection -->
-  <g opacity="0.15">
+  <g opacity="0.30">
     <rect x="36" y="114" width="16" height="24" rx="4" fill="#ffffff"/>
     <rect x="92" y="114" width="16" height="24" rx="4" fill="#ffffff"/>
     <path d="M42 134 Q42 168 72 168 Q102 168 102 134" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>

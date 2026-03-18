@@ -1,10 +1,17 @@
 pub mod mute_toggle;
-pub mod volume_button;
 pub mod volume_display;
+pub mod volume_down;
 pub mod volume_knob;
+pub mod volume_up;
 
 use crate::audio::devices;
+use crate::render::TitleOpts;
 use openaction::Instance;
+
+/// Build TitleOpts from common settings fields.
+pub fn title_opts<'a>(title: &'a str, color: &'a str, size: u32, position: &'a str) -> TitleOpts<'a> {
+    TitleOpts { text: title, color, size, position }
+}
 
 /// Sync all action types that are watching a specific device.
 /// Called when any action changes a device's state (mute, volume).
@@ -12,7 +19,8 @@ pub async fn sync_all_for_device(device_id: &str) {
     mute_toggle::sync_for_device(device_id).await;
     volume_knob::sync_for_device(device_id).await;
     volume_display::sync_for_device(device_id).await;
-    volume_button::sync_for_device(device_id).await;
+    volume_up::sync_for_device(device_id).await;
+    volume_down::sync_for_device(device_id).await;
 }
 
 /// Send the list of available audio devices to a Property Inspector.

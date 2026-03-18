@@ -13,13 +13,16 @@ pub struct VolumeKnobSettings {
     pub device_id: String,
     pub icon: String,
     pub title: String,
+    pub title_color: String,
+    pub title_size: u32,
+    pub title_position: String,
     pub bg_color: String,
     pub bg_muted_color: String,
     pub icon_color: String,
     pub icon_muted_color: String,
-    pub bar_color: String,
     pub step: u32,
     pub react_to_state: bool,
+    pub display_mode: String,
 }
 
 impl Default for VolumeKnobSettings {
@@ -28,13 +31,16 @@ impl Default for VolumeKnobSettings {
             device_id: "@DEFAULT_AUDIO_SOURCE@".to_string(),
             icon: "mic".to_string(),
             title: String::new(),
+            title_color: "#ffffff".to_string(),
+            title_size: 14,
+            title_position: "top".to_string(),
             bg_color: "#000000".to_string(),
             bg_muted_color: "#000000".to_string(),
             icon_color: "#22c55e".to_string(),
             icon_muted_color: "#ef4444".to_string(),
-            bar_color: "#22c55e".to_string(),
             step: 5,
             react_to_state: true,
+            display_mode: "bar".to_string(),
         }
     }
 }
@@ -100,16 +106,17 @@ pub async fn sync_for_device(device_id: &str) {
 
 async fn render_knob(instance: &Instance, s: &VolumeKnobSettings) -> OpenActionResult<()> {
     let (volume, muted) = audio::get_volume(&s.device_id).await;
-    let (bg, ic, bar_c) = if s.react_to_state {
+    let (bg, ic) = if s.react_to_state {
         let t = if muted { 0.0 } else { volume.clamp(0.0, 1.0) };
         (
             render::lerp_color(&s.bg_muted_color, &s.bg_color, t),
             render::lerp_color(&s.icon_muted_color, &s.icon_color, t),
-            render::lerp_color(&s.icon_muted_color, &s.bar_color, t),
         )
     } else {
-        (s.bg_color.clone(), s.icon_color.clone(), s.bar_color.clone())
+        (s.bg_color.clone(), s.icon_color.clone())
     };
-    let svg = render::volume_bar(&bg, &ic, &bar_c, &s.icon, volume, muted, &s.title);
+    let show_pct = s.display_mode == "percent";
+    let title = super::title_opts(&s.title, &s.title_color, s.title_size, &s.title_position);
+    let svg = render::volume_knob(&bg, &ic, &s.icon, volume, muted, &title, show_pct);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

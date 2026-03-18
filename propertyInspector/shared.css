@@ -9,35 +9,73 @@ label {
   display: block;
   font-size: 12px;
   color: #a6adc8;
-  margin-bottom: 4px;
-  margin-top: 12px;
+  margin-bottom: 3px;
+  margin-top: 10px;
 }
-label:first-child {
-  margin-top: 0;
+label:first-child { margin-top: 0; }
+
+/* Two-column flex row */
+.cols {
+  display: flex;
+  gap: 8px;
 }
+.cols > div {
+  flex: 1;
+  min-width: 0;
+}
+.cols > div > label { margin-top: 0; }
+.cols > div > select,
+.cols > div > input { width: 100%; box-sizing: border-box; }
+
+/* Inline row for mixed small inputs */
+.inline {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.inline > div { flex: 1; min-width: 0; }
+.inline > div > label { margin-top: 0; }
+.inline > div > input,
+.inline > div > select { width: 100%; box-sizing: border-box; }
+
+/* Color row: picker + hex */
 .color-row {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+.color-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Side-by-side color pairs */
+.color-pair {
+  display: flex;
   gap: 8px;
 }
+.color-pair > div { flex: 1; min-width: 0; }
+.color-pair > div > label { margin-top: 0; font-size: 11px; }
+
+/* Form elements */
 input[type="color"] {
-  width: 40px;
-  height: 32px;
+  width: 32px;
+  height: 26px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   background: none;
   padding: 0;
+  flex-shrink: 0;
 }
 input[type="text"],
 input[type="number"],
 select {
-  flex: 1;
   background: #313244;
   border: 1px solid #45475a;
   border-radius: 6px;
   color: #cdd6f4;
-  padding: 6px 8px;
+  padding: 5px 8px;
   font-size: 13px;
   font-family: monospace;
   box-sizing: border-box;
@@ -58,19 +96,14 @@ select option {
   background: #ffffff;
   color: #000000;
 }
-.row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.full-width {
-  width: 100%;
-}
+.full-width { width: 100%; }
+
+/* Checkbox */
 .checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 .checkbox-row input[type="checkbox"] {
   width: 16px;
@@ -78,19 +111,41 @@ select option {
   accent-color: #89b4fa;
   cursor: pointer;
 }
-.checkbox-row label {
-  margin: 0;
-  cursor: pointer;
+.checkbox-row label { margin: 0; cursor: pointer; }
+
+/* Radio */
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
 }
+.radio-row input[type="radio"] {
+  accent-color: #89b4fa;
+  cursor: pointer;
+  margin: 0;
+}
+.radio-row label {
+  margin: 0;
+  font-size: 13px;
+  color: #cdd6f4;
+  cursor: pointer;
+  padding-right: 6px;
+}
+
+/* Section cards */
 .section {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #313244;
+  margin-top: 12px;
+  padding: 8px 10px 10px;
+  background: #181825;
+  border-radius: 8px;
+  border: 1px solid #313244;
 }
 .section-title {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #6c7086;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
+.section label:first-of-type { margin-top: 0; }
