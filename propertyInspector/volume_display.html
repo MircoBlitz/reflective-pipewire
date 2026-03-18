@@ -50,32 +50,6 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Titel</div>
-    <input type="text" id="title" value="" class="full-width" placeholder="optional">
-    <div class="inline">
-      <div>
-        <label>Farbe</label>
-        <div class="color-row">
-          <input type="color" id="title_color_picker" value="#ffffff">
-          <input type="text" id="title_color" value="#ffffff" maxlength="7">
-        </div>
-      </div>
-      <div>
-        <label>Größe</label>
-        <input type="number" id="title_size" value="14" min="8" max="32">
-      </div>
-      <div>
-        <label>Position</label>
-        <select id="title_position">
-          <option value="top">Oben</option>
-          <option value="middle">Mitte</option>
-          <option value="bottom">Unten</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
     <div class="section-title">Farben</div>
     <div class="color-pair">
       <div>
@@ -119,19 +93,12 @@
     window.piFields = {
       device_id:        { type: "select",   default: "@DEFAULT_AUDIO_SOURCE@" },
       react_to_state:   { type: "checkbox", default: true },
-<<<<<<< Updated upstream
-      title:            { type: "text",     default: "" },
-      title_color:      { type: "color",    default: "#ffffff" },
-      title_size:       { type: "number",   default: 14 },
-      title_position:   { type: "select",   default: "top" },
-=======
       title_enabled:    { type: "checkbox", default: true },
       title:            { type: "text",     default: "" },
       title_max_lines:  { type: "number",   default: 2 },
       title_max_chars:  { type: "number",   default: 16 },
       title_color:      { type: "color",    default: "#ffffff" },
       title_size:       { type: "number",   default: 14 },
->>>>>>> Stashed changes
       icon_color:       { type: "color",    default: "#22c55e" },
       icon_muted_color: { type: "color",    default: "#ef4444" },
       bg_color:         { type: "color",    default: "#000000" },

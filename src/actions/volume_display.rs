@@ -114,7 +114,7 @@ async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenA
     } else {
         s.title.clone()
     };
-    let title = super::title_opts(&display_title, &s.title_color, s.title_size, "middle", s.title_max_lines, s.title_max_chars);
+    let title = super::title_opts(&display_title, &s.title_color, s.title_size, "label", s.title_max_lines, s.title_max_chars);
     let svg = render::volume_display(&bg, &ic, volume, muted, &title);
     instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }

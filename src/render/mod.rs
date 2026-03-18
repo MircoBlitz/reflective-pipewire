@@ -48,42 +48,48 @@ fn title_svg(opts: &TitleOpts) -> String {
         return String::new();
     }
 
-    // Split text into two lines at the longest possible break point
-    let words: Vec<&str> = opts.text.split_whitespace().collect();
-    let (line1, line2) = if words.len() > 1 && opts.text.len() > 20 {
-        // Try to split roughly in half
-        let mid = words.len() / 2;
-        let l1 = words[..mid].join(" ");
-        let l2 = words[mid..].join(" ");
-        (l1, Some(l2))
-    } else {
-        (opts.text.to_string(), None)
+    let max_chars = opts.max_chars as usize;
+    let max_lines = opts.max_lines as usize;
+
+    // Word-wrap with hard-cut on overlong words
+    let mut lines: Vec<String> = Vec::new();
+    let mut current = String::new();
+
+    for word in opts.text.split_whitespace() {
+        let word = if word.len() > max_chars { &word[..max_chars] } else { word };
+        if current.is_empty() {
+            current.push_str(word);
+        } else if current.len() + 1 + word.len() <= max_chars {
+            current.push(' ');
+            current.push_str(word);
+        } else {
+            lines.push(current.clone());
+            if lines.len() >= max_lines { break; }
+            current = word.to_string();
+        }
+    }
+    if !current.is_empty() && lines.len() < max_lines {
+        lines.push(current);
+    }
+
+    let num_lines = lines.len();
+    let line_height = opts.size as i32 + 3;
+
+    // "label": centered in the space between % display (bottom ~y=50) and bar (top y=120) → center y=85
+    let y_start: i32 = match opts.position {
+        "label"  => 85 - ((num_lines as i32 - 1) * line_height) / 2,
+        "middle" => 72 - ((num_lines as i32 - 1) * line_height) / 2,
+        "bottom" => 142 - (num_lines as i32 - 1) * line_height,
+        _        => opts.size as i32 + 2, // top
     };
 
-    let base_y = match opts.position {
-        "middle" => 72 + opts.size as i32 / 3,
-        "bottom" => 140,
-        _ => 4 + opts.size as i32, // top
-    };
-
-    let y1 = base_y - 14;
-    let y2 = base_y + opts.size as i32 - 16;
-
-    let line1_el = format!(
-        r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
-        y = y1, sz = opts.size, c = opts.color, t = line1,
-    );
-
-    let line2_el = if let Some(l2) = line2 {
+    lines.iter().enumerate().map(|(i, line)| {
+        let y = y_start + i as i32 * line_height;
         format!(
             r#"<text x="72" y="{y}" text-anchor="middle" font-family="sans-serif" font-size="{sz}" font-weight="bold" fill="{c}">{t}</text>"#,
-            y = y2, sz = opts.size, c = opts.color, t = l2,
+            y = y, sz = opts.size, c = opts.color, t = line,
         )
-    } else {
-        String::new()
-    };
-
-    format!("{}\n  {}", line1_el, line2_el)
+    }).collect::<Vec<_>>().join("\n  ")
 }
 
 /// Render a mute toggle button as SVG.
