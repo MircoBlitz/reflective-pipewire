@@ -31,7 +31,7 @@ pub async fn get_volume(device_id: &str) -> (f32, bool) {
 
 /// Set absolute volume (0.0 - 1.0+).
 pub async fn set_volume(device_id: &str, volume: f32) {
-    let vol_str = format!("{:.2}", volume.max(0.0));
+    let vol_str = format!("{:.2}", volume.clamp(0.0, 1.0));
     if let Err(e) = Command::new("wpctl")
         .args(["set-volume", device_id, &vol_str])
         .status()
@@ -43,13 +43,15 @@ pub async fn set_volume(device_id: &str, volume: f32) {
 
 /// Adjust volume relatively (e.g. "5%+" or "5%-").
 pub async fn adjust_volume(device_id: &str, delta: &str) {
-    if let Err(e) = Command::new("wpctl")
-        .args(["set-volume", device_id, delta])
-        .status()
-        .await
-    {
-        log::error!("Failed to adjust volume for {device_id}: {e}");
-    }
+    let (current, _) = get_volume(device_id).await;
+    let change = delta.trim_matches(|c: char| c.is_alphabetic()).parse::<f32>().unwrap_or(0.0) / 100.0;
+    let is_increase = delta.contains('+');
+    let new_volume = if is_increase {
+        current + change
+    } else {
+        current - change
+    };
+    set_volume(device_id, new_volume).await;
 }
 
 /// Toggle mute state.
