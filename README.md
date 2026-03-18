@@ -14,7 +14,7 @@ A reflective PipeWire audio suite plugin for [OpenDeck](https://github.com/amans
 ## Requirements
 
 - Linux with PipeWire (and PulseAudio compatibility layer)
-- [OpenDeck](https://github.com/amansprojects/opendeck) installed
+- [OpenDeck](https://github.com/nekename/OpenDeck) installed
 - `wpctl` and `pactl` available in PATH
 
 ## Installation
