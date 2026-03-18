@@ -55,7 +55,6 @@ impl Action for MuteToggleAction {
         let (vol, muted) = audio::get_volume(&settings.device_id).await;
         render_button(instance, vol, muted, settings).await?;
         super::send_device_list(instance).await;
-        sync_all_instances().await;
         Ok(())
     }
 

@@ -58,7 +58,6 @@ impl Action for VolumeKnobAction {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
         render_knob(instance, settings).await?;
         super::send_device_list(instance).await;
-        sync_all_instances().await;
         Ok(())
     }
 
