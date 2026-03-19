@@ -1,5 +1,9 @@
+use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
+use std::sync::LazyLock;
 use tokio::process::Command;
+
+static NAME_CACHE: LazyLock<DashMap<String, String>> = LazyLock::new(DashMap::new);
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AudioDevice {
@@ -19,19 +23,24 @@ pub async fn list_sources() -> Vec<AudioDevice> {
     parse_devices("sources", "source").await
 }
 
-/// Get device name from ID (special handling for defaults)
+/// Get device name from ID (special handling for defaults). Result is cached.
 pub async fn get_device_name(device_id: &str) -> String {
     match device_id {
         "@DEFAULT_AUDIO_SOURCE@" => "Default Source".to_string(),
         "@DEFAULT_AUDIO_SINK@" => "Default Sink".to_string(),
         id => {
+            if let Some(cached) = NAME_CACHE.get(id) {
+                return cached.clone();
+            }
             let mut all_devices = list_sources().await;
             all_devices.extend(list_sinks().await);
-            all_devices
+            let name = all_devices
                 .iter()
                 .find(|d| d.id == id)
                 .map(|d| d.description.clone())
-                .unwrap_or_else(|| id.to_string())
+                .unwrap_or_else(|| id.to_string());
+            NAME_CACHE.insert(id.to_string(), name.clone());
+            name
         }
     }
 }
@@ -87,9 +96,9 @@ async fn parse_devices(kind: &str, label: &str) -> Vec<AudioDevice> {
                 continue;
             }
 
-            // Get ID
-            let id = match node.get("id").and_then(|v| v.as_u64()) {
-                Some(id) => id.to_string(),
+            // Use node.name as stable identifier (numeric pw-dump IDs change on every restart)
+            let id = match props.get("node.name").and_then(|v| v.as_str()) {
+                Some(name) => name.to_string(),
                 None => continue,
             };
 

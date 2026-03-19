@@ -38,10 +38,10 @@ async fn run_monitor(tx: &broadcast::Sender<AudioEvent>) -> Result<(), String> {
     let mut reader = BufReader::new(stdout).lines();
 
     while let Ok(Some(line)) = reader.next_line().await {
-        if line.contains("'change' on source") || line.contains("source-output") {
+        if line.contains(" on source") || line.contains("source-output") {
             let _ = tx.send(AudioEvent::SourceChanged);
         }
-        if line.contains("'change' on sink") || line.contains("sink-input") {
+        if line.contains(" on sink") || line.contains("sink-input") {
             let _ = tx.send(AudioEvent::SinkChanged);
         }
     }

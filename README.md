@@ -95,6 +95,14 @@ Then install the `.zip` via OpenDeck.
 
 The plugin spawns a background `pactl subscribe` process that monitors all audio events. When any source or sink changes state, every visible button watching that device re-renders with the current volume and mute state. Actions that modify a device (toggle mute, change volume) trigger an immediate sync of all buttons for that device across all action types.
 
+## Known Issues
+
+- **Buttons turn white when dropping an encoder action (e.g. Volume Knob) onto a keypad slot.** OpenDeck clears all button images internally when this happens. Buttons recover on the next interaction — an audio event, button press, or adding another button.
+
+## Acknowledgements
+
+Thanks to the [OpenDeck](https://github.com/amansprojects/opendeck) team for building an open Stream Deck runtime for Linux — this plugin wouldn't exist without it.
+
 ## License
 
 MIT

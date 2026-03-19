@@ -5,7 +5,7 @@ use crate::actions::volume_display::{self, VolumeDisplayAction};
 use crate::actions::volume_down::{self, VolumeDownAction};
 use crate::actions::volume_knob::{self, VolumeKnobAction};
 use crate::actions::volume_up::{self, VolumeUpAction};
-use crate::audio::monitor;
+use crate::audio::{self, monitor};
 
 struct GlobalHandler;
 
@@ -13,7 +13,7 @@ struct GlobalHandler;
 impl GlobalEventHandler for GlobalHandler {
     async fn device_did_connect(&self, _event: DeviceDidConnectEvent) -> OpenActionResult<()> {
         log::info!("Device connected/layout changed – syncing all instances");
-        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
         mute_toggle::sync_all_instances().await;
         volume_knob::sync_all_instances().await;
         volume_display::sync_all_instances().await;
@@ -39,12 +39,18 @@ pub async fn init() -> OpenActionResult<()> {
     tokio::spawn(async move {
         loop {
             match rx.recv().await {
-                Ok(_event) => {
+                Ok(event) => {
+                    audio::invalidate_all_id_caches();
                     mute_toggle::sync_all_instances().await;
+                    if matches!(event, monitor::AudioEvent::SinkChanged) {
+                        volume_knob::sync_all_instances().await;
+                    }
                 }
                 Err(tokio::sync::broadcast::error::RecvError::Lagged(n)) => {
-                    log::warn!("Monitor lagged {n} events, syncing mute_toggle");
+                    log::warn!("Monitor lagged {n} events, syncing");
+                    audio::invalidate_all_id_caches();
                     mute_toggle::sync_all_instances().await;
+                    volume_knob::sync_all_instances().await;
                 }
                 Err(tokio::sync::broadcast::error::RecvError::Closed) => {
                     log::error!("Monitor channel closed");

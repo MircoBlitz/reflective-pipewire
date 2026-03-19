@@ -46,6 +46,7 @@ impl Default for VolumeDownSettings {
 }
 
 static SETTINGS: LazyLock<DashMap<InstanceId, VolumeDownSettings>> = LazyLock::new(DashMap::new);
+static LAST_IMAGE: LazyLock<DashMap<InstanceId, String>> = LazyLock::new(DashMap::new);
 
 pub struct VolumeDownAction;
 
@@ -56,19 +57,26 @@ impl Action for VolumeDownAction {
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
-        render_button(instance, settings).await?;
-        super::send_device_list(instance).await;
-
-        tokio::spawn(async {
-            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
-            super::sync_all_instances().await;
+        let id = instance.instance_id.clone();
+        tokio::spawn(async move {
+            if let Some(inst) = get_instance(id).await {
+                let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
+                let _ = render_button(&inst, &s).await;
+                super::send_device_list(&inst).await;
+            }
         });
-
+        tokio::spawn(async {
+            for ms in [100u64, 500, 1000] {
+                tokio::time::sleep(tokio::time::Duration::from_millis(ms)).await;
+                crate::actions::rerender_all_cached().await;
+            }
+        });
         Ok(())
     }
 
     async fn will_disappear(&self, instance: &Instance, _settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.remove(&instance.instance_id);
+        LAST_IMAGE.remove(&instance.instance_id);
         Ok(())
     }
 
@@ -83,6 +91,14 @@ impl Action for VolumeDownAction {
         audio::adjust_volume(&settings.device_id, &format!("{}%-", settings.step)).await;
         super::sync_all_for_device(&settings.device_id).await;
         Ok(())
+    }
+}
+
+pub async fn rerender_cached() {
+    for inst in visible_instances(VolumeDownAction::UUID).await {
+        if let Some(img) = LAST_IMAGE.get(&inst.instance_id) {
+            let _ = inst.set_image(Some(img.clone()), None).await;
+        }
     }
 }
 
@@ -120,5 +136,7 @@ async fn render_button(instance: &Instance, s: &VolumeDownSettings) -> OpenActio
 
     let title = super::title_opts(&display_title, &s.title_color, s.title_size, title_position, 2, 16);
     let svg = render::volume_button(&bg, &ic, &s.icon, &label, &title);
-    instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
+    let data_uri = render::svg_to_data_uri(&svg);
+    LAST_IMAGE.insert(instance.instance_id.clone(), data_uri.clone());
+    instance.set_image(Some(data_uri), None).await
 }

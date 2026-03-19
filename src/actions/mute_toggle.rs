@@ -48,6 +48,7 @@ impl Default for MuteToggleSettings {
 }
 
 static SETTINGS: LazyLock<DashMap<InstanceId, MuteToggleSettings>> = LazyLock::new(DashMap::new);
+static LAST_IMAGE: LazyLock<DashMap<InstanceId, String>> = LazyLock::new(DashMap::new);
 
 pub struct MuteToggleAction;
 
@@ -59,24 +60,28 @@ impl Action for MuteToggleAction {
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         log::info!("MuteToggle will_appear: {}", instance.instance_id);
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
-
-        // Render this button
-        let (vol, muted) = audio::get_volume(&settings.device_id).await;
-        render_button(instance, vol, muted, settings).await?;
-        super::send_device_list(instance).await;
-
-        // Re-render all action instances to prevent UI reset
-        tokio::spawn(async {
-            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
-            super::sync_all_instances().await;
+        let id = instance.instance_id.clone();
+        tokio::spawn(async move {
+            if let Some(inst) = get_instance(id).await {
+                let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
+                let (vol, muted) = audio::get_volume(&s.device_id).await;
+                let _ = render_button(&inst, vol, muted, &s).await;
+                super::send_device_list(&inst).await;
+            }
         });
-
+        tokio::spawn(async {
+            for ms in [100u64, 500, 1000] {
+                tokio::time::sleep(tokio::time::Duration::from_millis(ms)).await;
+                crate::actions::rerender_all_cached().await;
+            }
+        });
         Ok(())
     }
 
     async fn will_disappear(&self, instance: &Instance, _settings: &Self::Settings) -> OpenActionResult<()> {
         log::info!("MuteToggle will_disappear: {}", instance.instance_id);
         SETTINGS.remove(&instance.instance_id);
+        LAST_IMAGE.remove(&instance.instance_id);
         Ok(())
     }
 
@@ -94,6 +99,14 @@ impl Action for MuteToggleAction {
         audio::toggle_mute(&settings.device_id).await;
         super::sync_all_for_device(&settings.device_id).await;
         Ok(())
+    }
+}
+
+pub async fn rerender_cached() {
+    for inst in visible_instances(MuteToggleAction::UUID).await {
+        if let Some(img) = LAST_IMAGE.get(&inst.instance_id) {
+            let _ = inst.set_image(Some(img.clone()), None).await;
+        }
     }
 }
 
@@ -137,5 +150,7 @@ async fn render_button(instance: &Instance, volume: f32, muted: bool, s: &MuteTo
     };
     let title = super::title_opts(&display_title, &s.title_color, s.title_size, &s.title_position, s.title_max_lines, s.title_max_chars);
     let svg = render::mute_button(&bg, &ic, &s.icon, muted, &title);
-    instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
+    let data_uri = render::svg_to_data_uri(&svg);
+    LAST_IMAGE.insert(instance.instance_id.clone(), data_uri.clone());
+    instance.set_image(Some(data_uri), None).await
 }
