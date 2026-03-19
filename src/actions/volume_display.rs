@@ -46,7 +46,6 @@ impl Default for VolumeDisplaySettings {
 }
 
 static SETTINGS: LazyLock<DashMap<InstanceId, VolumeDisplaySettings>> = LazyLock::new(DashMap::new);
-static LAST_IMAGE: LazyLock<DashMap<InstanceId, String>> = LazyLock::new(DashMap::new);
 
 pub struct VolumeDisplayAction;
 
@@ -57,26 +56,19 @@ impl Action for VolumeDisplayAction {
 
     async fn will_appear(&self, instance: &Instance, settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.insert(instance.instance_id.clone(), settings.clone());
-        let id = instance.instance_id.clone();
-        tokio::spawn(async move {
-            if let Some(inst) = get_instance(id).await {
-                let s = SETTINGS.get(&inst.instance_id).map(|s| s.clone()).unwrap_or_default();
-                let _ = render_display(&inst, &s).await;
-                super::send_device_list(&inst).await;
-            }
-        });
+        render_display(instance, settings).await?;
+        super::send_device_list(instance).await;
+
         tokio::spawn(async {
-            for ms in [100u64, 500, 1000] {
-                tokio::time::sleep(tokio::time::Duration::from_millis(ms)).await;
-                crate::actions::rerender_all_cached().await;
-            }
+            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+            super::sync_all_instances().await;
         });
+
         Ok(())
     }
 
     async fn will_disappear(&self, instance: &Instance, _settings: &Self::Settings) -> OpenActionResult<()> {
         SETTINGS.remove(&instance.instance_id);
-        LAST_IMAGE.remove(&instance.instance_id);
         Ok(())
     }
 
@@ -85,14 +77,6 @@ impl Action for VolumeDisplayAction {
         render_display(instance, settings).await?;
         super::send_device_list(instance).await;
         Ok(())
-    }
-}
-
-pub async fn rerender_cached() {
-    for inst in visible_instances(VolumeDisplayAction::UUID).await {
-        if let Some(img) = LAST_IMAGE.get(&inst.instance_id) {
-            let _ = inst.set_image(Some(img.clone()), None).await;
-        }
     }
 }
 
@@ -132,7 +116,5 @@ async fn render_display(instance: &Instance, s: &VolumeDisplaySettings) -> OpenA
     };
     let title = super::title_opts(&display_title, &s.title_color, s.title_size, "label", s.title_max_lines, s.title_max_chars);
     let svg = render::volume_display(&bg, &ic, volume, muted, &title);
-    let data_uri = render::svg_to_data_uri(&svg);
-    LAST_IMAGE.insert(instance.instance_id.clone(), data_uri.clone());
-    instance.set_image(Some(data_uri), None).await
+    instance.set_image(Some(render::svg_to_data_uri(&svg)), None).await
 }
