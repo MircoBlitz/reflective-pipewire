@@ -1,6 +1,6 @@
 # Reflective PipeWire
 
-A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amansprojects/opendeck) (Stream Deck on Linux). All buttons sync their state in real-time — mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
+A reflective PipeWire audio suite plugin for [OpenDeck](https://github.com/nekename/OpenDeck) (Stream Deck on Linux). All buttons sync their state in real-time — mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
 
 ## Features
 
@@ -14,7 +14,7 @@ A reactive PipeWire audio suite plugin for [OpenDeck](https://github.com/amanspr
 ## Requirements
 
 - Linux with PipeWire (and PulseAudio compatibility layer)
-- [OpenDeck](https://github.com/amansprojects/opendeck) installed
+- [OpenDeck](https://github.com/nekename/OpenDeck) installed
 - `wpctl` and `pactl` available in PATH
 
 ## Installation
@@ -101,7 +101,7 @@ The plugin spawns a background `pactl subscribe` process that monitors all audio
 
 ## Acknowledgements
 
-Thanks to the [OpenDeck](https://github.com/amansprojects/opendeck) team for building an open Stream Deck runtime for Linux — this plugin wouldn't exist without it.
+Thanks to the [OpenDeck](https://github.com/nekename/OpenDeck) team for building an open Stream Deck runtime for Linux — this plugin wouldn't exist without it.
 
 ## License
 
