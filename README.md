@@ -1,6 +1,6 @@
 # Reflective PipeWire
 
-A reflective PipeWire audio suite plugin for [OpenDeck](https://github.com/nekename/OpenDeck) (Stream Deck on Linux). All buttons sync their state in real-time — mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
+A reflective PipeWire audio suite plugin for [OpenDeck](https://github.com/nekename/OpenDeck) (Stream Deck on Linux). All buttons sync their state in real-time - mute your mic via a pedal and every button across all your Stream Decks reflects the change instantly.
 
 ## Features
 
@@ -31,18 +31,18 @@ A reflective PipeWire audio suite plugin for [OpenDeck](https://github.com/neken
 Toggles mute on any source or sink. The icon color switches between active (default: green) and muted (default: red).
 
 **Settings:**
-- **Device** — select any source/sink or use the system default
-- **Icon** — choose from 12 built-in icons
-- **Icon Colors** — active and muted color (applied to the icon)
-- **Background Colors** — active and muted color (default: black/black)
+- **Device** - select any source/sink or use the system default
+- **Icon** - choose from 12 built-in icons
+- **Icon Colors** - active and muted color (applied to the icon)
+- **Background Colors** - active and muted color (default: black/black)
 
 ### Volume Knob (Encoder)
 
 For Stream Deck+ dials. Rotate to change volume, press to toggle mute. Shows a volume bar and percentage.
 
 **Settings:**
-- **Device** / **Icon** — same as Mute Toggle
-- **Step per Tick** — volume change per encoder tick (default: 5%)
+- **Device** / **Icon** - same as Mute Toggle
+- **Step per Tick** - volume change per encoder tick (default: 5%)
 - **Icon Colors** / **Background Colors** / **Bar Color**
 
 ### Volume Display (Keypad)
@@ -50,7 +50,7 @@ For Stream Deck+ dials. Rotate to change volume, press to toggle mute. Shows a v
 Read-only button that shows the current volume as a bar and percentage. Updates in real-time when volume changes from any source.
 
 **Settings:**
-- **Device** / **Icon** — same as Mute Toggle
+- **Device** / **Icon** - same as Mute Toggle
 - **Icon Colors** / **Background Colors** / **Bar Color**
 
 ### Volume Up (Keypad)
@@ -59,7 +59,7 @@ Press to increase volume by a configurable step.
 
 **Settings:**
 - **Device** / **Icon** / **Step**
-- **Reflect mute state** — checkbox to enable icon color changes on mute (off by default)
+- **Reflect mute state** - checkbox to enable icon color changes on mute (off by default)
 - **Icon Colors** / **Background Colors**
 
 ### Volume Down (Keypad)
@@ -68,7 +68,7 @@ Press to decrease volume by a configurable step.
 
 **Settings:**
 - **Device** / **Icon** / **Step**
-- **Reflect mute state** — checkbox to enable icon color changes on mute (off by default)
+- **Reflect mute state** - checkbox to enable icon color changes on mute (off by default)
 - **Icon Colors** / **Background Colors**
 
 ## Building from source
@@ -97,11 +97,11 @@ The plugin spawns a background `pactl subscribe` process that monitors all audio
 
 ## Known Issues
 
-- **Buttons turn white when dropping an encoder action (e.g. Volume Knob) onto a keypad slot.** OpenDeck clears all button images internally when this happens. Buttons recover on the next interaction — an audio event, button press, or adding another button.
+- **Buttons turn white when dropping an encoder action (e.g. Volume Knob) onto a keypad slot.** OpenDeck clears all button images internally when this happens. Buttons recover on the next interaction - an audio event, button press, or adding another button.
 
 ## Acknowledgements
 
-Thanks to the [OpenDeck](https://github.com/nekename/OpenDeck) team for building an open Stream Deck runtime for Linux — this plugin wouldn't exist without it.
+Thanks to the [OpenDeck](https://github.com/nekename/OpenDeck) team for building an open Stream Deck runtime for Linux - this plugin wouldn't exist without it.
 
 ## License
 
