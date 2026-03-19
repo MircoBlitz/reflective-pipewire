@@ -40,6 +40,8 @@ Toggles mute on any source or sink. The icon color switches between active (defa
 
 For Stream Deck+ dials. Rotate to change volume, press to toggle mute. Shows a volume bar and percentage.
 
+> **Note:** Volume can be raised up to 150%. Values above 100% are only effective if **"Allow volume to exceed 100%"** (or equivalent) is enabled in your system sound settings - otherwise the system silently caps at 100%.
+
 **Settings:**
 - **Device** / **Icon** - same as Mute Toggle
 - **Step per Tick** - volume change per encoder tick (default: 5%)
@@ -55,7 +57,9 @@ Read-only button that shows the current volume as a bar and percentage. Updates 
 
 ### Volume Up (Keypad)
 
-Press to increase volume by a configurable step.
+Press to increase volume by a configurable step. Maximum is 150%.
+
+> **Note:** Values above 100% are only effective if **"Allow volume to exceed 100%"** (or equivalent) is enabled in your system sound settings - otherwise the system silently caps at 100%.
 
 **Settings:**
 - **Device** / **Icon** / **Step**
