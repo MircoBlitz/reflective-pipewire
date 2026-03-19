@@ -84,7 +84,7 @@ pub async fn get_volume(device_id: &str) -> (f32, bool) {
 /// Set absolute volume (0.0 - 1.0+).
 pub async fn set_volume(device_id: &str, volume: f32) {
     let wpctl_id = resolve_wpctl_id(device_id).await;
-    let vol_str = format!("{:.2}", volume.clamp(0.0, 1.0));
+    let vol_str = format!("{:.2}", volume.clamp(0.0, 1.5));
     if let Err(e) = Command::new("wpctl")
         .args(["set-volume", &wpctl_id, &vol_str])
         .status()
